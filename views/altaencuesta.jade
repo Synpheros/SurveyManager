@@ -1,0 +1,21 @@
+extends layout
+
+block content
+
+  h1 Página de encuestas
+  h2 #{v}
+  form(name="altaencuesta", method="post", action="/altaencuesta", enctype="multipart/form-data")
+    div.input
+        span.label Nombre encuesta:
+        br
+        input(type="text", name="surveysname")
+        br
+        span.label Encuesta pre:
+        br
+        input(type="file", name="pre")
+        br
+        span.label Encuesta post:
+        br
+        input(type="file", name="post")
+        br
+        input(type="submit", name="altaencuesta", value="Crear nueva encuesta")

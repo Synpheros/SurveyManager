@@ -1,0 +1,21 @@
+extends layout
+
+block content
+
+  h1 Mis encuestas
+  p Estas son las #{numencuestas} encuestas creadas:
+    ul
+    each key in encuestas
+      li
+        p Nombre encuesta !{key.nombreencuesta}
+        p Cuestionario previo: !{key.pre}
+        p Cuestionario posterior: !{key.post}
+        p Las clases asociadas con esta encuesta son: !{key.clases}
+        p Dar de alta clase:
+          form(name="seleccionarclase", method="post", action="/misencuestas")
+            input(type="hidden",name="encuesta",value="#{key.nombreencuesta}")
+            select(name="claseseleccionada")
+              each clase in clases
+                option
+                  !{clase.clase}
+            input(type="submit", name="seleccionclase", value="Seleccionar clase")

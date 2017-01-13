@@ -1,0 +1,11 @@
+extends layout
+
+block content
+
+  h1 Encuesta asignada a clase
+  p Clase seleccionada #{clase}, con #{numalumnos} alumnos
+  p Los codigos son:
+  ul
+    each key in codigos
+      li
+        p !{key}

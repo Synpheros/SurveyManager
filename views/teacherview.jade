@@ -1,0 +1,37 @@
+extends layout
+
+block content
+
+  h1 Página del profesor
+  p Bienvenido #{username} !
+  hr
+  h2 Dar de alta nueva clase
+  form(name="altaclase", method="post", action="/teacherview")
+    div.input
+        span.label Número de alumnos:
+        br
+        input(type="number", min="1", max="999", name="alumnos", required)
+        br
+        br
+        span.label Introduzca una palabra clave para la clase: 
+        br
+        i (Sugerencia: incluya el nombre del colegio y el número y letra de la clase)
+        br
+        input(type="text", name="clave", required)
+    div.actions
+        br
+        input(type="submit", name="clasenueva", value="Crear nueva clase")
+
+  hr
+  h2 Mis clases
+  p Ya has dado de alta un total de #{clases} clases.
+  form(name="misclases", method="post", action="/teacherview")
+      div.actions
+        input(type="submit", name="misclases", value="Ver clases creadas")
+  hr
+  h2 Encuestas
+  div
+      form(name="altaencuesta", method="get", action="/altaencuesta")
+          input(type="submit", name="altaencuesta", value="Crear nueva encuesta")
+      form(name="verencuestas", method="get", action="/misencuestas")
+          input(type="submit", name="misencuestas", value="Ver encuestas creadas")

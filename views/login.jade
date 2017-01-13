@@ -1,0 +1,18 @@
+extends layout
+
+block content
+
+  h1 Acceso profesores
+
+  form(name="login", method="post", action="/login")
+    div.input
+        span.label Usuario:
+        br
+        input(type="text", name="username", required)
+    div.input
+        span.label Contraseña:
+        br
+        input(type="password", name="pass", required)
+    div.actions
+        br
+        input(type="submit", value="Login")

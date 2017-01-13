@@ -1,0 +1,18 @@
+doctype html
+html
+
+ head
+  h1 Gestión de profesores
+ body
+   p Bienvenido al portal de gestión de profesores.
+   button(onclick="registro()") Registrar nuevo profesor
+   button(onclick="login()") Ya tengo cuenta de profesor
+
+script.
+  function registro() {
+    window.location.href = '/register'
+  }
+
+  function login() {
+    window.location.href = '/login'
+  }
