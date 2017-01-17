@@ -5,16 +5,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var config = require('./config');
 
 var mongo = require('mongodb');
 var monk = require('monk');
-var db = monk('localhost:27017/dbclass');
+var db = monk(config.mongodb.uri);
 var index = require('./routes/index');
 
 db.collection('classcollection');
 db.collection('surveycollection');
 
 var app = express();
+app.config = config;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

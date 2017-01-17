@@ -30,4 +30,7 @@ exports.a2 = {
     a2AdminUsername: '{{a2AdminUsername}}',
     a2AdminPassword: '{{a2AdminPassword}}'
 };
+exports.mongodb = {
+    uri: process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || '{{mongodbUrl}}'
+};
 exports.limesurveyUrl = '{{limesurveyUrl}}';

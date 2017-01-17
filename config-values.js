@@ -89,6 +89,9 @@ function initFromEnv(conf, prefix, links) {
 exports.defaultValues = {
     projectName: 'Survey Manager',
     companyName: 'e-UCM Research Group',
+    mongoHost: 'localhost',
+    mongoPort: '27017',
+    mongodbUrl: 'mongodb://localhost:27017/limesurveymanager',
     a2Host: 'localhost',
     a2Port: '3000',
     a2Prefix: 'surveymanager',
@@ -110,6 +113,9 @@ exports.defaultValues = {
 exports.testValues = {
     projectName: 'Survey Manager',
     companyName: 'e-UCM Research Group',
+    mongoHost: 'localhost',
+    mongoPort: '27017',
+    mongodbUrl: 'mongodb://localhost:27017/limesurveymanager-test',
     a2Host: 'localhost',
     a2Port: '3000',
     a2Prefix: 'surveymanager',
@@ -129,11 +135,13 @@ exports.testValues = {
 };
 
 var prefix = 'RAGE_ANALYTICS_SURVEYMANAGER_';
-var links = ['a2','limesurvey'];
+var links = ['a2','limesurvey','mongo'];
 initFromEnv(exports.defaultValues, prefix, links);
 initFromEnv(exports.testValues, prefix, links);
 
 // Some control instructions
+exports.defaultValues.mongodbUrl = 'mongodb://' + exports.defaultValues.mongoHost + ':' + exports.defaultValues.mongoPort + '/limesurveymanager';
+exports.testValues.mongodbUrl = exports.defaultValues.mongodbUrl + '-test';
 
 exports.defaultValues.apiPath = 'http://' + exports.defaultValues.host + ':' + exports.defaultValues.port + '/api';
 exports.testValues.apiPath = exports.defaultValues.apiPath;

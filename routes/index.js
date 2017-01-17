@@ -1,30 +1,25 @@
 ﻿var express = require('express');
 var fileUpload = require('express-fileupload');
-var request = require('request');
-var async = require('async');
+var config = require('../config');
 
 var app = express();
 app.use(fileUpload());
 
-var user = 'admin';
-var pass = '123456';
-var SESSIONKEY="";
-
 var options = {
-	url: "http://localhost/limesurvey/index.php/admin/remotecontrol",
+	url: config.limesurveyUrl + 'index.php/admin/remotecontrol',
 	method: "POST",
 	headers: {
 		'user-agent': 'Apache-HttpClient/4.2.2 (java 1.5)',
-    	'host': '192.168.175.106',
-    	'path': '/limesurvey/index.php/admin/remotecontrol',
+    	'host': 'localhost',
+    	'path': '/index.php/admin/remotecontrol',
     	'connection': 'keep-alive',
     	'content-type': 'application/json'
   	}
 };
 
-require('./user.js')(app);
-require('./clase.js')(app);
-require('./survey.js')(app);
+var user = require('./user.js')(app);
+var clase = require('./clase.js')(app);
+var survey = require('./survey.js')(app,options);
 
 
 module.exports = app;

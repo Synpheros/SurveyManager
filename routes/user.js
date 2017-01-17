@@ -1,6 +1,7 @@
 /* GET home page. */
 
 module.exports = function(app){
+
 	app.get('/', function(req, res, next) {
 		res.render('index', { title: 'Home' });
 	});
@@ -195,4 +196,25 @@ module.exports = function(app){
 		}
 	});
 
+	function randomString(length, chars) {
+		var mask = '';
+		if (chars.indexOf('a') > -1) mask += 'abcdefghijklmnopqrstuvwxyz';
+		if (chars.indexOf('A') > -1) mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		if (chars.indexOf('#') > -1) mask += '0123456789';
+		if (chars.indexOf('!') > -1) mask += '~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
+		var result = '';
+		for (var i = length; i > 0; i--) result += mask[Math.floor(Math.random() * mask.length)];
+		return result;
+	}
+
+	// funcion auxiliar para chequear si un numero ya ha sido usado
+	function repetido(codigo, usados) {
+		var repe = false;
+		for (var i = 0; i < usados.length; i++) {
+			if (codigo == usados[i]) {
+				repe = true;
+			}
+		}
+		return repe;
+	}
 }

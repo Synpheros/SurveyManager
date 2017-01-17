@@ -13,8 +13,7 @@ USER ${USER_NAME}
 WORKDIR ${WORK_DIR}
 
 # get dependencies sorted out
-RUN npm install \
-    && bower install
+RUN npm install
 
 # configure & gen apidoc
 RUN npm run fast-setup
@@ -24,3 +23,5 @@ EXPOSE 3350
 CMD [ "npm", "run", "docker-start" ]
 
 # EXPECTS: a2 at 3000
+# EXPECTS: mongo at 27017
+# EXPECTS: limesurvey at 80
