@@ -32,9 +32,11 @@ module.exports = function(app,options){
 		var list = [];
 		async.waterfall([
 			surveyLib.creaSurvey(req.files.pre, 'pre', list),
-			surveyLib.creaSurvey(req.files.post, 'post', list)
+			surveyLib.creaSurvey(req.files.post, 'post', list),
+			surveyLib.registraSurveys(req.db, userName, req.body.surveysname, list),
+			surveyLib.muestraEncuestas(req.db, userName)
 		], function (err, result) {
-			surveyLib.registraSurveys(res, req.db, userName, req.body.surveysname, list);
+			res.redirect('misencuestas');
 		});
 	});
 
@@ -56,9 +58,6 @@ module.exports = function(app,options){
 		});
 	});
 
-
-
-
 	/* POST to mis encuestas */
 	app.post('/misencuestas', function(req, res) {
 		var clase = {clase : "", numalumnos: "", codigos: []};
@@ -69,15 +68,13 @@ module.exports = function(app,options){
 			claseLib.cargaClase(db, req.body.claseseleccionada, clase),
 			surveyLib.cargaEncuesta(db, req.body.encuesta, encuesta),
 			surveyLib.limesurveyAuthentication,
-			surveyLib.altaAlumnos(clase,encuesta)
+			surveyLib.altaAlumnos(clase,encuesta),
+			surveyLib.registraClaseEncuesta(db, clase, encuesta)
 		], function (err, result) {
 			if (err) {
 				console.log("Error en el registro de clase y encuesta")
 			}
-			else 
-				surveyLib.registraClaseEncuesta(db, clase, encuesta);
-			//$dummy = array("email"=>"dummy@dummy.dum","firstname"=>"dummy","lastname"=>"dummy");
-			//res.render('claseencuesta', {clase : result.clase, numalumnos: result.numalumnos, codigos: result.codigos})
+			res.redirect('misencuestas');
 		});
 	});
 }

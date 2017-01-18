@@ -6,7 +6,7 @@ block content
   p Bienvenido #{username} !
   hr
   h2 Dar de alta nueva clase
-  form(name="altaclase", method="post", action="/teacherview")
+  form(name="altaclase", method="post", action="teacherview")
     div.input
         span.label Número de alumnos:
         br
@@ -25,13 +25,13 @@ block content
   hr
   h2 Mis clases
   p Ya has dado de alta un total de #{clases} clases.
-  form(name="misclases", method="post", action="/teacherview")
+  form(name="misclases", method="post", action="teacherview")
       div.actions
         input(type="submit", name="misclases", value="Ver clases creadas")
   hr
   h2 Encuestas
   div
-      form(name="altaencuesta", method="get", action="/altaencuesta")
+      form(name="altaencuesta", method="get", action="altaencuesta")
           input(type="submit", name="altaencuesta", value="Crear nueva encuesta")
-      form(name="verencuestas", method="get", action="/misencuestas")
+      form(name="verencuestas", method="get", action="misencuestas")
           input(type="submit", name="misencuestas", value="Ver encuestas creadas")

@@ -21,15 +21,23 @@ module.exports = function(app){
 		var db = req.db;
 		var collection = db.get('usercollection');
 		collection.find({},{},function(e,docs){
-			res.render('userlist', {
-				"userlist" : docs
-			});
+			res.render('userlist', {"userlist" : docs });
 		});
 	});
 
 	/* GET teacher view page. */
 	app.get('/teacherview', function(req, res, next) {
-		res.render('teacherview', { title: 'Vista del profesor' });
+		if(userName){
+			var db = req.db;
+			var classcollection = db.get('classcollection');
+			classcollection.find({"username": userName}, function(err,docs) {
+				if (err) clases = 0;
+				else clases = docs.length;
+				res.render('teacherview', {username : userName, clases: clases});
+			});
+		}
+		else
+			res.redirect('');
 	});
 
 	/* POST to register new teacher */
@@ -71,7 +79,7 @@ module.exports = function(app){
 					}
 					else {
 						// Forward to success page
-						res.render('teacherview', {username : userName});
+						res.redirect('teacherview');
 					}
 				});
 			} 
@@ -97,13 +105,7 @@ module.exports = function(app){
 		   if (docs.length > 0) {
 			    // Username exists
 			    if (docs[0].pass == userPass) {
-				    var classcollection = db.get('classcollection');
-					classcollection.find({"username": userName}, function(err,docs) {
-					   if (err) clases = 0;
-					   else clases = docs.length;
-					// Forward to success page
-				    res.render('teacherview', {username : userName, clases: clases});
-				    });
+				    res.redirect('teacherview');
 			    }
 			    else {
 			        res.send("Error. Contraseña incorrecta.");

@@ -12,7 +12,7 @@ block content
         p Cuestionario posterior: !{key.post}
         p Las clases asociadas con esta encuesta son: !{key.clases}
         p Dar de alta clase:
-          form(name="seleccionarclase", method="post", action="/misencuestas")
+          form(name="seleccionarclase", method="post", action="misencuestas")
             input(type="hidden",name="encuesta",value="#{key.nombreencuesta}")
             select(name="claseseleccionada")
               each clase in clases
