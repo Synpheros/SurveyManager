@@ -1,7 +1,7 @@
 FROM node
 
 ENV USER_NAME="user" \
-    WORK_DIR="/"
+    WORK_DIR="/app"
 
 # setup user, group and workdir
 COPY ./ ${WORK_DIR}/
