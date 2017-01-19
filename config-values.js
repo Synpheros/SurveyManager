@@ -155,5 +155,5 @@ exports.testValues.a2ApiPath = exports.defaultValues.a2ApiPath;
 exports.testValues.a2AdminUsername = exports.defaultValues.a2AdminUsername;
 exports.testValues.a2AdminPassword = exports.defaultValues.a2AdminPassword;
 
-exports.defaultValues.limesurveyUrl = 'http://' + exports.defaultValues.limesurveyHost + ':' + exports.defaultValues.limesurveyPort + '/';
+exports.defaultValues.limesurveyUrl = exports.defaultValues.limesurveyHost + ':' + exports.defaultValues.limesurveyPort;
 exports.testValues.limesurveyUrl = exports.defaultValues.limesurveyUrl;
