@@ -21,6 +21,51 @@ module.exports = function(app,options){
 		res.render('altaencuesta', { title: 'Alta encuesta' });
 	});
 
+	app.get('/validate', function(req, res, next) {
+		var sid = req.query.survey;
+		var token = req.query.token;
+		var survey = [];
+		var tid = [];
+
+		async.waterfall([
+			surveyLib.limesurveyAuthentication,
+			surveyLib.getSurvey(sid,survey),
+			surveyLib.checkSurveyStarted(survey),
+			surveyLib.checkSurveyToken(sid,token,tid)
+		], function (err, result) {
+			if(err)
+				return next(new Error(result));
+			res.json({message: "Token "+token+" exists for survey "+sid});
+		});
+	});
+
+	app.get('/completed', function(req, res, next) {
+		var sid = req.query.survey;
+		var token = req.query.token;
+		var survey = [];
+		var tid = [];
+		var rid = [];
+
+		async.waterfall([
+			surveyLib.limesurveyAuthentication,
+			surveyLib.getSurvey(sid,survey),
+			surveyLib.checkSurveyStarted(survey),
+			surveyLib.checkSurveyToken(sid,token,tid),
+			surveyLib.getResponseId(sid,token,rid),
+			surveyLib.tokenHasCompleted(sid,token,rid)
+		], function (err, result) {
+			if(err)
+				return next(new Error(result));
+			res.json({message: "Token "+token+" completed survey "+sid});
+		});
+	});
+
+	app.get('/survey/:survey', function(req, res, next) {
+		var token = req.query.token;
+		var survey = req.params.survey;
+		res.redirect("http://polls.e-ucm.es/index.php/" + survey + "?token=" + token);
+	});
+
 	/* POST to alta encuesta */
 	app.post('/altaencuesta', function(req, res) {
 		var pre, post;
