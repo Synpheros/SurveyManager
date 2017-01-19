@@ -6,11 +6,11 @@ var app = express();
 app.use(fileUpload());
 
 var options = {
-	url: config.limesurveyUrl + 'index.php/admin/remotecontrol',
+	url: 'http://' + config.limesurveyUrl + '/index.php/admin/remotecontrol',
 	method: "POST",
 	headers: {
 		'user-agent': 'Apache-HttpClient/4.2.2 (java 1.5)',
-    	'host': 'localhost',
+    	'host': config.limesurveyUrl,
     	'path': '/index.php/admin/remotecontrol',
     	'connection': 'keep-alive',
     	'content-type': 'application/json'
