@@ -49,7 +49,8 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   // render the error page
   var info = {
-        message: err.message
+        message: err.message,
+        error: true
     };
     //info.stack = err.stack;
 
