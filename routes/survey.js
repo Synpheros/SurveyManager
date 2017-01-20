@@ -1,4 +1,7 @@
-module.exports = function(app,options){
+module.exports = function(auth, options){
+
+	var express = require('express'),
+    router = express.Router();
 
 	var request = require('request');
 	var async = require('async');
@@ -17,11 +20,11 @@ module.exports = function(app,options){
 	//###################################################
 
 	/* GET alta encuesta */
-	app.get('/altaencuesta', function(req, res, next) {
+	router.get('/altaencuesta', function(req, res, next) {
 		res.render('altaencuesta', { title: 'Alta encuesta' });
 	});
 
-	app.get('/validate', function(req, res, next) {
+	router.get('/validate', function(req, res, next) {
 		if(!req.query.survey)
 			return next(new Error("Unknown survey"));
 
@@ -45,7 +48,7 @@ module.exports = function(app,options){
 		});
 	});
 
-	app.get('/completed', function(req, res, next) {
+	router.get('/completed', function(req, res, next) {
 		if(!req.query.survey)
 			return next(new Error("Unknown survey"));
 
@@ -72,7 +75,7 @@ module.exports = function(app,options){
 		});
 	});
 
-	app.get('/survey/:survey', function(req, res, next) {
+	router.get('/survey/:survey', function(req, res, next) {
 		var token = req.query.token;
 		var survey = req.params.survey;
 		var url = 'http://polls.e-ucm.es/index.php/' + survey + '?token=' + token;
@@ -82,7 +85,7 @@ module.exports = function(app,options){
 	});
 
 	/* POST to alta encuesta */
-	app.post('/altaencuesta', function(req, res) {
+	router.post('/altaencuesta', function(req, res) {
 		var pre, post;
 
 		if (!req.files) {
@@ -105,7 +108,7 @@ module.exports = function(app,options){
 	//###################################################
 
 	/* GET to mis encuestas */
-	app.get('/misencuestas', function(req, res) {
+	router.get('/misencuestas', function(req, res) {
 		var encuestas = [], clases = [];
 		var db = req.db;
 
@@ -119,7 +122,7 @@ module.exports = function(app,options){
 	});
 
 	/* POST to mis encuestas */
-	app.post('/misencuestas', function(req, res) {
+	router.post('/misencuestas', function(req, res) {
 		var clase = {clase : "", numalumnos: "", codigos: []};
 		var encuesta = {nombreencuesta : "", pre: "", post: "", clases: []};
 		var db = req.db;
@@ -137,4 +140,6 @@ module.exports = function(app,options){
 			res.redirect('misencuestas');
 		});
 	});
+
+	return router;
 }

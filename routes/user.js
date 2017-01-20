@@ -1,23 +1,34 @@
 /* GET home page. */
 
-module.exports = function(app){
+module.exports = function(auth){
 
-	app.get('/', function(req, res, next) {
+	var express = require('express'),
+    router = express.Router();
+
+	router.get('/', auth, function(req, res, next) {
 		res.render('index', { title: 'Home' });
 	});
 
+	router.get('/home', function(req, res, next) {
+		if(req.session && req.session.user){
+			res.render('index', { title: 'Home' });
+		}else{
+			res.redirect('login');
+		}
+	});
+
 	/* GET register page. */
-	app.get('/register', function(req, res, next) {
+	router.get('/register', function(req, res, next) {
 		res.render('register', { title: 'Registro profesor'});
 	});
 
 	/* GET login page. */
-	app.get('/login', function(req, res, next) {
+	router.get('/login', function(req, res, next) {
 		res.render('login', { title: 'Acceso profesor' });
 	});
 
 	/* GET userlist page. */
-	app.get('/userlist', function(req, res) {
+	router.get('/userlist', function(req, res) {
 		var db = req.db;
 		var collection = db.get('usercollection');
 		collection.find({},{},function(e,docs){
@@ -26,7 +37,7 @@ module.exports = function(app){
 	});
 
 	/* GET teacher view page. */
-	app.get('/teacherview', function(req, res, next) {
+	router.get('/teacherview', function(req, res, next) {
 		if(userName){
 			var db = req.db;
 			var classcollection = db.get('classcollection');
@@ -41,7 +52,7 @@ module.exports = function(app){
 	});
 
 	/* POST to register new teacher */
-	app.post('/register', function(req, res) {
+	router.post('/register', function(req, res) {
 
 		// Set our internal DB variable
 		var db = req.db;
@@ -88,13 +99,13 @@ module.exports = function(app){
 	});
 
 	/* POST to login teacher */
-	app.post('/login', function(req, res) {
+	router.post('/login', function(req, res) {
 
 		// Set our internal DB variable
 		var db = req.db;
 
 		// Get our form values. These rely on the "name" attributes
-		userName = req.body.username;
+		var userName = req.body.pass;
 		var userPass = req.body.pass;
 
 		// Set our collection
@@ -105,6 +116,7 @@ module.exports = function(app){
 		   if (docs.length > 0) {
 			    // Username exists
 			    if (docs[0].pass == userPass) {
+					req.session.user = req.body.username;
 				    res.redirect('teacherview');
 			    }
 			    else {
@@ -119,7 +131,7 @@ module.exports = function(app){
 	});
 
 	/* POST to teacher view */
-	app.post('/teacherview', function(req, res) {
+	router.post('/teacherview', function(req, res) {
 
 	    /* alta nueva clase */
 	    if (req.body.clasenueva) {
@@ -219,4 +231,6 @@ module.exports = function(app){
 		}
 		return repe;
 	}
+
+	return router;
 }

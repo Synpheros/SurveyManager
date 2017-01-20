@@ -1,6 +1,11 @@
-module.exports = function(app){
+module.exports = function(auth){
+
+	var express = require('express'),
+    router = express.Router();
 	/* GET mis clases view page. */
-	app.get('/misclases', function(req, res, next) {
+	router.get('/misclases', function(req, res, next) {
 	  res.render('misclases', { title: 'Mis clases' });
 	});
+
+	return router;
 }
