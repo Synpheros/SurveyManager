@@ -75,7 +75,10 @@ module.exports = function(app,options){
 	app.get('/survey/:survey', function(req, res, next) {
 		var token = req.query.token;
 		var survey = req.params.survey;
-		res.redirect("http://polls.e-ucm.es/index.php/" + survey + "?token=" + token);
+		var url = 'http://polls.e-ucm.es/index.php/' + survey + '?token=' + token;
+		res.writeHead(301,{Location: url});
+		res.end();
+		//res.redirect("http://polls.e-ucm.es/index.php/" + survey + "?token=" + token);
 	});
 
 	/* POST to alta encuesta */
