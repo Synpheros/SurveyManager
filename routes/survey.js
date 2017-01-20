@@ -22,6 +22,12 @@ module.exports = function(app,options){
 	});
 
 	app.get('/validate', function(req, res, next) {
+		if(!req.query.survey)
+			return next(new Error("Unknown survey"));
+
+		if(!req.query.token)
+			return next(new Error("Unknown token"));
+
 		var sid = req.query.survey;
 		var token = req.query.token;
 		var survey = [];
@@ -40,6 +46,12 @@ module.exports = function(app,options){
 	});
 
 	app.get('/completed', function(req, res, next) {
+		if(!req.query.survey)
+			return next(new Error("Unknown survey"));
+
+		if(!req.query.token)
+			return next(new Error("Unknown token"));
+
 		var sid = req.query.survey;
 		var token = req.query.token;
 		var survey = [];
