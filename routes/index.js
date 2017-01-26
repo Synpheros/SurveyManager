@@ -1,9 +1,14 @@
 ﻿module.exports = function(app){
 
-	process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+	if(!app.config.limesurveyUrl.includes('localhost')){
+		console.log("--SECURE MODE--");
+		process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+		prefix = 'https://';
+	}else
+		prefix = 'http://';
 	
 	var options = {
-		url: 'https://' + app.config.limesurveyUrl + '/index.php/admin/remotecontrol',
+		url: prefix + app.config.limesurveyUrl + '/index.php/admin/remotecontrol',
 		method: "POST",
 		headers: {
 			'user-agent': 'Apache-HttpClient/4.2.2 (java 1.5)',
