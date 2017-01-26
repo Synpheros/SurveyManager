@@ -2,36 +2,31 @@ extends layout
 
 block content
 
-  h1 Página del profesor
-  p Bienvenido #{username} !
-  hr
-  h2 Dar de alta nueva clase
-  form(name="altaclase", method="post", action="teacherview")
-    div.input
-        span.label Número de alumnos:
-        br
-        input(type="number", min="1", max="999", name="alumnos", required)
-        br
-        br
-        span.label Introduzca una palabra clave para la clase: 
-        br
-        i (Sugerencia: incluya el nombre del colegio y el número y letra de la clase)
-        br
-        input(type="text", name="clave", required)
-    div.actions
-        br
-        input(type="submit", name="clasenueva", value="Crear nueva clase")
-
-  hr
-  h2 Mis clases
-  p Ya has dado de alta un total de #{clases} clases.
-  form(name="misclases", method="post", action="teacherview")
-      div.actions
-        input(type="submit", name="misclases", value="Ver clases creadas")
-  hr
-  h2 Encuestas
-  div
-      form(name="altaencuesta", method="get", action="altaencuesta")
-          input(type="submit", name="altaencuesta", value="Crear nueva encuesta")
-      form(name="verencuestas", method="get", action="misencuestas")
-          input(type="submit", name="misencuestas", value="Ver encuestas creadas")
+  .container.starter-template(role="main")
+    div.jumbotron
+      h1 Página del profesor
+      p Bienvenido #{username} !
+    .row
+      .col-md-4
+        h2 Nueva clase
+        form(name="altaclase", method="post", action="../classes", enctype="multipart/form-data")
+          .form-group.row
+            label.col-sm-2.col-form-label(for='learners') Número de alumnos
+            .col-sm-10
+              input#learners.form-control(type='number', min="1", max="999", name="learners", placeholder='De 1 a 999', required)
+          .form-group.row
+            label.col-sm-2.col-form-label(for='key') Nombre de la Clase
+            .col-sm-10
+              input#key.form-control(type='text', name="key", placeholder='ej: IES-Ejemplo-4B')
+          .form-group.row
+            .offset-sm-2.col-sm-10
+              button.btn.btn-primary(type='submit', mame='clasenueva' value="login") Crear nueva clase
+      .col-md-4
+        h2 Mis clases
+        p Ya has dado de alta un total de #{clases} clases.
+        p
+          a.btn.btn-secondary(href='../classes', role='button') Ver clases »
+      .col-md-4
+        h2 Mis encuestas
+        p
+          a.btn.btn-secondary(href='../surveys', role='button') Ver encuestas »

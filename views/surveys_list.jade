@@ -1,0 +1,23 @@
+extends layout
+
+block content
+
+  .container.starter-template(role="main")
+    h1 Mis encuestas
+    p Estas son las #{surveys.length} encuestas creadas:
+      a(href="surveys/new") Nueva encuesta
+      ul
+      each survey in surveys
+        li
+          p Nombre encuesta !{survey.name}
+          p Cuestionario previo: !{survey.pre}
+          p Cuestionario posterior: !{survey.post}
+          p Las clases asociadas con esta encuesta son: !{survey.classrooms}
+          p Dar de alta clase:
+            form(name="seleccionarclase", method="post", action="surveys/addclass", enctype="multipart/form-data")
+              input(type="hidden",name="survey",value="#{survey._id}")
+              select(name="classroom")
+                each classroom in classrooms
+                  option(value="#{classroom._id}")
+                    !{classroom.key}
+              input(type="submit", name="seleccionclase", value="Seleccionar clase")

@@ -6,20 +6,7 @@ module.exports = function(auth){
     router = express.Router();
 
 	router.get('/', auth, function(req, res, next) {
-		res.render('index', { title: 'Home' });
-	});
-
-	router.get('/home', function(req, res, next) {
-		if(req.session && req.session.user){
-			res.render('index', { title: 'Home' });
-		}else{
-			res.redirect('login');
-		}
-	});
-
-	/* GET register page. */
-	router.get('/register', function(req, res, next) {
-		res.render('register', { title: 'Registro profesor'});
+		res.redirect('users/teacherview');
 	});
 
 	/* GET login page. */
@@ -27,8 +14,13 @@ module.exports = function(auth){
 		res.render('login', { title: 'Acceso profesor' });
 	});
 
+	/* GET register page. */
+	router.get('/register', function(req, res, next) {
+		res.render('register', { title: 'Registro profesor'});
+	});
+
 	/* GET userlist page. */
-	router.get('/userlist', function(req, res) {
+	router.get('/userlist', auth, function(req, res) {
 		var db = req.db;
 		var collection = db.get('usercollection');
 		collection.find({},{},function(e,docs){
@@ -37,18 +29,14 @@ module.exports = function(auth){
 	});
 
 	/* GET teacher view page. */
-	router.get('/teacherview', function(req, res, next) {
-		if(userName){
-			var db = req.db;
-			var classcollection = db.get('classcollection');
-			classcollection.find({"username": userName}, function(err,docs) {
-				if (err) clases = 0;
-				else clases = docs.length;
-				res.render('teacherview', {username : userName, clases: clases});
-			});
-		}
-		else
-			res.redirect('');
+	router.get('/teacherview', auth, function(req, res, next) {
+		var db = req.db;
+		var classcollection = db.get('classcollection');
+		classcollection.find({"user": req.session.user._id}, function(err,docs) {
+			if (err) clases = 0;
+			else clases = docs.length;
+			res.render('teacherview', {username : req.session.user.username, clases: clases});
+		});
 	});
 
 	/* POST to register new teacher */
@@ -89,8 +77,9 @@ module.exports = function(auth){
 						res.send("There was a problem adding the information to the database.");
 					}
 					else {
+						req.session.user = doc;
 						// Forward to success page
-						res.redirect('teacherview');
+						res.redirect('users/teacherview');
 					}
 				});
 			} 
@@ -105,7 +94,7 @@ module.exports = function(auth){
 		var db = req.db;
 
 		// Get our form values. These rely on the "name" attributes
-		var userName = req.body.pass;
+		var userName = req.body.username;
 		var userPass = req.body.pass;
 
 		// Set our collection
@@ -116,7 +105,7 @@ module.exports = function(auth){
 		   if (docs.length > 0) {
 			    // Username exists
 			    if (docs[0].pass == userPass) {
-					req.session.user = req.body.username;
+					req.session.user = docs[0];
 				    res.redirect('teacherview');
 			    }
 			    else {
@@ -129,108 +118,6 @@ module.exports = function(auth){
 		});
 
 	});
-
-	/* POST to teacher view */
-	router.post('/teacherview', function(req, res) {
-
-	    /* alta nueva clase */
-	    if (req.body.clasenueva) {
-			var Nalumnos = req.body.alumnos;
-
-			// generamos los codigos aleatorios para los alumnos
-			var codigos = [];
-			for (var i=0; i < Nalumnos; i++) {
-				var codigo = randomString(4, 'A');
-				while (repetido(codigo, codigos)) {
-					var codigo = randomString(4, 'A');
-				}
-				var j = i+1;
-				var numero = j > 9 ? "" + j: "0" + j;
-				var entry = {numero : numero, codigo : codigo};
-				codigos.push(entry);
-			};
-			 
-			// Set our internal DB variable
-			var db = req.db;
-
-			// Set our collection
-			var collection = db.get('classcollection');
-			collection.find({"username": userName}, function(err,docs) {
-				if (err) res.sendStatus("Error finding in db.");
-				collection.insert({
-					"username": userName, 
-					"class": docs.length + 1, 
-					"clave": req.body.clave,
-					"alumnos": Nalumnos, 
-					"codigos": codigos
-				},function(e,docs) {
-					if (e) {
-					 	res.sendStatus("Error inserting in db."+e);
-					}
-					else {
-						res.render('altaclase', {alumnos : Nalumnos, codigos : codigos});
-					}
-			   });
-
-			});
-	    }
-
-	    /* ver mis clases */
-	    else if (req.body.misclases) {
-			// Set our internal DB variable
-			var db = req.db;
-			
-			// Set our collection
-			var collection = db.get('classcollection');
-			collection.find({"username": userName}, function(err,docs) {
-				if (err) res.sendStatus("Error finding in DB.");
-				else {
-					var numclases = docs.length;
-					var clases = [];
-					for (var i=0; i < numclases; i++) {
-						var id = i+1;
-						var clave = docs[i].clave;
-						var numalumnos = docs[i].codigos.length;
-						var codigos = []
-						for (var j=0; j < numalumnos; j++) {
-							codigos.push(docs[i].codigos[j].codigo);
-						}
-						var entry = {id: numero, clase : clave, numalumnos: numalumnos, codigos: codigos};
-						clases.push(entry);
-					}
-					res.render('misclases', {numclases: numclases, clases: clases});
-			   }
-			});
-	   }
-		else if (req.body.altaencuesta) {
-			res.render('altaencuesta', {});
-		}
-		else if (req.body.verencuestas) {
-			res.render('misencuestas', {});
-		}
-	});
-
-	function randomString(length, chars) {
-		var mask = '';
-		if (chars.indexOf('a') > -1) mask += 'abcdefghijklmnopqrstuvwxyz';
-		if (chars.indexOf('A') > -1) mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		if (chars.indexOf('#') > -1) mask += '0123456789';
-		if (chars.indexOf('!') > -1) mask += '~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
-		var result = '';
-		for (var i = length; i > 0; i--) result += mask[Math.floor(Math.random() * mask.length)];
-		return result;
-	}
-
-	// funcion auxiliar para chequear si un numero ya ha sido usado
-	function repetido(codigo, usados) {
-		var repe = false;
-		for (var i = 0; i < usados.length; i++) {
-			if (codigo == usados[i]) {
-				repe = true;
-			}
-		}
-		return repe;
-	}
 
 	return router;
 }

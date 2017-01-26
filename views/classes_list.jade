@@ -1,0 +1,18 @@
+extends layout
+
+block content
+
+  .container.starter-template(role="main")
+    h1 Mis clases
+    p Estas son las #{clases.length} clases que has dado de alta hasta ahora:
+    each classroom in clases
+      h3 Clase 
+        a(href="classes/view/#{classroom._id}") !{classroom.key} 
+        | con !{classroom.codes.length} alumnos
+      p Los codigos de la clase son:
+      table
+        tbody
+          tr
+          each code in classroom.codes
+            td !{code.code}
+
