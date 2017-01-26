@@ -1,0 +1,15 @@
+extends layout
+
+block content
+
+  .container.starter-template(role="main")
+    h1 Clase #{classroom.key}
+    p La clase tiene 
+      b #{classroom.codes.length} alumnos.
+    hr
+    p Los códigos generados para los alumnos son: 
+    ol
+      each code in classroom.codes
+        li
+          p Código: 
+           b !{code.code}

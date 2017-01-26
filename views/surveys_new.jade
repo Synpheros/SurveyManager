@@ -1,0 +1,25 @@
+extends layout
+
+block content
+
+  .container.starter-template(role="main")
+    div.jumbotron
+      h1 Nueva encuesta
+      p
+        form(method="post", action="../surveys", enctype="multipart/form-data")
+          .form-group.row
+            label.col-sm-2.col-form-label(for='name') Nombre de la encuesta
+            .col-sm-10
+              input#name.form-control(type='text', name="name", placeholder='ej: Juego Primeros Auxilios.')
+           .form-group.row
+            label.col-sm-2.col-form-label(for='pre') Encuesta pre.
+            .col-sm-10
+              input#pre.form-control(type='file', name="pre", placeholder='Encuesta que se mostrará antes de jugar.')
+          .form-group.row
+            label.col-sm-2.col-form-label(for='post') Encuesta post.
+            .col-sm-10
+              input#post.form-control(type='file', name="post", placeholder='Encuesta que se mostrará después de jugar.')
+          .form-group.row
+            .offset-sm-2.col-sm-10
+              button.btn.btn-primary(type='submit', value="login") Crear encuesta
+

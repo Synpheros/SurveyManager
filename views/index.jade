@@ -1,18 +1,22 @@
-doctype html
-html
+extends layout
 
- head
-  h1 Gestión de profesores
- body
-   p Bienvenido al portal de gestión de profesores.
-   button(onclick="registro()") Registrar nuevo profesor
-   button(onclick="login()") Ya tengo cuenta de profesor
+block content
 
-script.
-  function registro() {
-    window.location.href = 'register'
-  }
-
-  function login() {
-    window.location.href = 'login'
-  }
+  .container.starter-template(role="main")
+    div.jumbotron
+      h1 Acceso Profesores
+      p
+        form(name="login", method="post", action="login")
+          .form-group.row
+            label.col-sm-2.col-form-label(for='username') Usuario
+            .col-sm-10
+              input#username.form-control(type='text', name="username", placeholder='Nombre de usuario')
+          .form-group.row
+            label.col-sm-2.col-form-label(for='password') Contraseña
+            .col-sm-10
+              input#password.form-control(type='password', name="password", placeholder='Introduce tu contraseña')
+          .form-group.row
+            .offset-sm-2.col-sm-10
+              button.btn.btn-primary(type='submit', value="login") Iniciar sesión
+          p ¿No tienes cuenta? Regístrate 
+            a(href="register") aquí

@@ -2,17 +2,21 @@ extends layout
 
 block content
 
-  h1 Acceso profesores
-
-  form(name="login", method="post", action="login")
-    div.input
-        span.label Usuario:
-        br
-        input(type="text", name="username", required)
-    div.input
-        span.label Contraseña:
-        br
-        input(type="password", name="pass", required)
-    div.actions
-        br
-        input(type="submit", value="Login")
+  .container.starter-template(role="main")
+    div.jumbotron
+      h1 Acceso Profesores
+      p
+        form(name="login", method="post", action="login", enctype="multipart/form-data")
+          .form-group.row
+            label.col-sm-2.col-form-label(for='username') Usuario
+            .col-sm-10
+              input#username.form-control(type='text', name="username", placeholder='Nombre de usuario')
+          .form-group.row
+            label.col-sm-2.col-form-label(for='password') Contraseña
+            .col-sm-10
+              input#password.form-control(type='password', name="pass", placeholder='Introduce tu contraseña')
+          .form-group.row
+            .offset-sm-2.col-sm-10
+              button.btn.btn-primary(type='submit', value="login") Iniciar sesión
+          p ¿No tienes cuenta? Regístrate 
+            a(href="register") aquí

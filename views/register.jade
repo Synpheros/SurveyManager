@@ -2,25 +2,29 @@ extends layout
 
 block content
 
-  h1 Registro de profesor
-
-  form(name="register", method="post", action="register")
-    div.input
-        span.label Nombre de usuario:
-        br
-        input(type="text", name="username", required)
-    div.input
-        span.label Introduzca su correo: 
-        br
-        input(type="email", name="mail", required)
-    div.input
-        span.label Introduzca la contraseña:
-        br
-        input(type="password", name="pass", required)
-    div.input
-        span.label Repita la contraseña:
-        br
-        input(type="password", name="pass2", required)
-    div.actions
-        br
-        input(type="submit", value="Registrarse")
+  .container.starter-template(role="main")
+    div.jumbotron
+      h1 Registro de Profesor
+      p
+        form(name="login", method="post", action="login", enctype="multipart/form-data")
+          .form-group.row
+            label.col-sm-2.col-form-label(for='username') Nombre de usuario
+            .col-sm-10
+              input#username.form-control(type='text', name="username", placeholder='ej: Pepe Pérez')
+           .form-group.row
+            label.col-sm-2.col-form-label(for='email') Introduzca su correo
+            .col-sm-10
+              input#email.form-control(type='mail', name="email", placeholder='ej: profesor@educacion.org')
+          .form-group.row
+            label.col-sm-2.col-form-label(for='password') Introduzca una contraseña
+            .col-sm-10
+              input#password.form-control(type='password', name="pass", placeholder='Introduce una contraseña')
+          .form-group.row
+            label.col-sm-2.col-form-label(for='repassword') Repita la contraseña
+            .col-sm-10
+              input#repassword.form-control(type='password', name="pass2", placeholder='Introduce tu contraseña')
+          .form-group.row
+            .offset-sm-2.col-sm-10
+              button.btn.btn-primary(type='submit', value="login") Registrarse
+          p ¿Estás registrado? Inicia sesión 
+            a(href="login") aquí
