@@ -51,7 +51,7 @@ module.exports = function(auth, options){
 
 		var saveAndRender = function(survey){
 			survey.save(function(err,result){
-				res.redirect('/');
+				res.redirect('surveys');
 			});
 		}
 
@@ -76,7 +76,7 @@ module.exports = function(auth, options){
 			survey.load(function(err,result){
 				survey.addClassroom(classroom, function(err,result){
 					survey.save(function(err,result){
-						res.redirect('/surveys');
+						res.redirect('surveys');
 					});
 				})
 			})
@@ -140,7 +140,6 @@ module.exports = function(auth, options){
 		var url = 'http://polls.e-ucm.es/index.php/' + survey + '?token=' + token;
 		res.writeHead(301,{Location: url});
 		res.end();
-		//res.redirect("http://polls.e-ucm.es/index.php/" + survey + "?token=" + token);
 	});
 
 	return router;

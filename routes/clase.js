@@ -7,7 +7,7 @@ module.exports = function(auth){
     var claseLib = require('../lib/clase');
 
 	/* GET mis clases view page. */
-	router.get('/', auth, function(req, res, next) {
+	router.get('/', auth(1), function(req, res, next) {
 		var clases = [];
 		var db = req.db;
 
@@ -20,7 +20,7 @@ module.exports = function(auth){
 		});
 	});
 
-	router.get('/view/:class_id', auth, function(req, res, next) {
+	router.get('/view/:class_id', auth(2), function(req, res, next) {
 		var classroom = new claseLib.Classroom(req.db, {_id: req.params.class_id});
 
 		classroom.load(function(err, result){
@@ -28,7 +28,7 @@ module.exports = function(auth){
 		});
 	});
 
-	router.post('/', auth, function(req, res, next){
+	router.post('/', auth(1), function(req, res, next){
 		var db = req.db;
 
 		var codes = generateCodes(req.body.learners, 4, 'A');
@@ -43,8 +43,7 @@ module.exports = function(auth){
 			if(err)
 				return next(new Error(err));
 
-			var url = '/classes/view/' + result._id;
-			res.redirect(url);
+			res.redirect('classes/view/' + result._id);
 		})
 	});
 

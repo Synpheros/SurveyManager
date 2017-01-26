@@ -79,7 +79,7 @@ module.exports = function(auth){
 					else {
 						req.session.user = doc;
 						// Forward to success page
-						res.redirect('users/teacherview');
+						res.redirect('teacherview');
 					}
 				});
 			} 

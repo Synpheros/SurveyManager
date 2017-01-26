@@ -14,24 +14,31 @@
 	  	}
 	};
 
-    var auth = function(req, res, next) {
-	  if (req.session && req.session.user)
-	    return next();
-	  else
-	    return res.redirect('../users/login');
+    var auth = function(level){
+		return function(req, res, next) {
+			if (req.session && req.session.user)
+				return next();
+			else{
+				var pre = '';
+				for(var i = 0; i < level; i++){
+					pre += '../';
+				}
+				return res.redirect(pre + 'users/login');
+			}
+		};
 	};
 
 	var express = require('express'),
     router = express.Router();
 
-    router.get('/', auth, function(req, res, next) {
+    router.get('/', auth(0), function(req, res, next) {
 		res.render('index', { title: 'Home' });
 	});
 
     app.use('/', router);
 
-	app.use('/users', require('./user.js')(auth));
+	app.use('/users', require('./user.js')(auth(1)));
 	app.use('/classes', require('./clase.js')(auth));
-	app.use('/surveys', require('./survey.js')(auth, options));
+	app.use('/surveys', require('./survey.js')(auth(1), options));
 
 }
