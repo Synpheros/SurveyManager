@@ -18,7 +18,7 @@
 	  if (req.session && req.session.user)
 	    return next();
 	  else
-	    return res.redirect('/users/login');
+	    return res.redirect('../users/login');
 	};
 
 	var express = require('express'),
