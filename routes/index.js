@@ -1,6 +1,6 @@
 ﻿module.exports = function(app){
 
-	if(!app.config.limesurveyUrl.includes('localhost')){
+	if(!app.config.limesurveyUrl.includes('80')){
 		console.log("--SECURE MODE--");
 		process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 		prefix = 'https://';
