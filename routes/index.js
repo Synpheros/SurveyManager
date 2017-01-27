@@ -37,7 +37,7 @@
     router = express.Router();
 
     router.get('/', auth(0), function(req, res, next) {
-		res.render('index', { title: 'Home' });
+		res.redirect('users/teacherview');
 	});
 
     app.use('/', router);

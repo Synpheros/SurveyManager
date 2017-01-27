@@ -28,7 +28,10 @@ module.exports = function(auth, options){
 			surveyLib.listSurveys(db, req.session.user._id, surveys),
 			claseLib.listClassrooms(db, {user: req.session.user._id}, classrooms),
 		], function (err, result) {
-			res.render('surveys_list', {surveys: surveys, classrooms: classrooms});
+			var auxclass = [];
+			for(var i = 0; i<classrooms.length; i++)
+				auxclass[classrooms[i]._id] = classrooms[i];
+			res.render('surveys_list', {surveys: surveys, classrooms: classrooms, auxclass: auxclass});
 		});
 	});
 
@@ -76,7 +79,7 @@ module.exports = function(auth, options){
 			survey.load(function(err,result){
 				survey.addClassroom(classroom, function(err,result){
 					survey.save(function(err,result){
-						res.redirect('surveys');
+						res.redirect('../surveys');
 					});
 				})
 			})
