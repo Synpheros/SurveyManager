@@ -25,7 +25,7 @@ module.exports = function(auth, options){
 		var db = req.db;
 
 		async.waterfall([
-			surveyLib.listSurveys(db, req.session.user._id, surveys),
+			surveyLib.listSurveys(db, {user: req.session.user._id}, surveys),
 			claseLib.listClassrooms(db, {user: req.session.user._id}, classrooms),
 		], function (err, result) {
 			var auxclass = [];
@@ -86,6 +86,37 @@ module.exports = function(auth, options){
 		})
 	});
 
+	router.get('/switch', auth, function(req,res,next){
+		if(!req.query.survey)
+			return next(new Error("Unknown survey"));
+
+		if(!req.query.classroom)
+			return next(new Error("Unknown classroom"));
+
+		var sid = req.query.survey;
+		var cid = req.query.classroom;
+
+		var classroom = new claseLib.Classroom(req.db, {_id: cid});
+		classroom.load(function(err,result){
+			var survey = new surveyLib.Survey(req.db, {_id: sid});
+			survey.load(function(err,result){
+				for(var i = 0; i < survey.classrooms.length; i++){
+					if(classroom._id.toString() == survey.classrooms[i]._id.toString()){
+						survey.classrooms[i].active = !survey.classrooms[i].active;
+						break;
+					}
+				}
+
+				survey.save(function(err,result){
+					if(err)
+						return next(new Error(err));
+
+					res.redirect('../surveys');
+				})
+			})
+		})
+	})
+
 	router.get('/validate', function(req, res, next) {
 		if(!req.query.survey)
 			return next(new Error("Unknown survey"));
@@ -93,21 +124,28 @@ module.exports = function(auth, options){
 		if(!req.query.token)
 			return next(new Error("Unknown token"));
 
-		var sid = req.query.survey;
+		var sid = parseInt(req.query.survey);
 		var token = req.query.token;
 		var survey = [];
 		var tid = [];
 
-		async.waterfall([
-			lsController.auth,
-			lsController.get(sid,survey),
-			lsController.started(survey),
-			lsController.hasToken(sid,token,tid)
-		], function (err, result) {
+		getClassForCode(req.db, sid, token, function(err, result){
 			if(err)
 				return next(new Error(result));
-			res.json({message: "Token "+token+" exists for survey "+sid});
+			
+			async.waterfall([
+				lsController.auth,
+				lsController.get(sid,survey),
+				lsController.started(survey),
+				lsController.hasToken(sid,token,tid)
+			], function (err, result) {
+				if(err)
+					return next(new Error(result));
+				res.json({message: "Token "+token+" exists for survey "+sid});
+			});
 		});
+
+
 	});
 
 	router.get('/completed', function(req, res, next) {
@@ -144,6 +182,42 @@ module.exports = function(auth, options){
 		res.writeHead(301,{Location: url});
 		res.end();
 	});
+
+	function getClassForCode(db, survey,code,callback){
+		var surveys = [], classrooms = [];
+
+		async.waterfall([
+			claseLib.listClassrooms(db, {codes: {code: code}}, classrooms),
+			surveyLib.listSurveys(db, {$or: [{pre: survey}, {post: survey}]}, surveys),
+		], function (err, result) {
+			if(err)
+				callback(err, result);
+			else{
+				if(classrooms){
+					if(surveys){
+						var found = false;
+						for(var i = 0; i < surveys[0].classrooms.length; i++){
+							var c = surveys[0].classrooms[i];
+							console.log(c._id + " " + classrooms[0]._id);
+							if(c._id.toString() == classrooms[0]._id.toString()){
+								found = true;
+								if(c.active){
+									callback(null, classrooms);
+								}else
+									callback(true, "No active class found for this token and survey.");
+								break;
+							}
+						}
+						if(!found)
+							callback(true, "Class not found for this survey");
+					}else
+						callback(true, "Survey not found.");	
+				}else
+					callback(true, "Classroom not found.");
+				
+			}
+		});
+	}
 
 	return router;
 }

@@ -14,7 +14,9 @@ block content
           ul  
             each c in survey.classrooms
               li 
-                a(href="../classes/view/#{c}") !{auxclass[c].key}
+                a(href="./classes/view/#{c._id}") !{auxclass[c._id].key}
+                span  - 
+                a(href="surveys/switch?classroom=#{c._id}&survey=#{survey._id}") #{c.active?'Activada': 'Desactivada'}
         p Dar de alta clase:
           form(name="seleccionarclase", method="post", action="surveys/addclass", enctype="multipart/form-data")
             input(type="hidden",name="survey",value="#{survey._id}")
