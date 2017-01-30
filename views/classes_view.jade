@@ -4,6 +4,10 @@ block content
 
   .container.starter-template(role="main")
     h1 Clase #{classroom.key}
+    p 
+      a(href="../pdf/#{classroom._id}",target="_blank")
+        img(src="../../icon/pdf.png",width="75px")
+      img(src="../../icon/word.png",width="75px")
     p La clase tiene 
       b #{classroom.codes.length} alumnos.
     hr
