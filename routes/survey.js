@@ -134,6 +134,7 @@ module.exports = function(auth, options){
 				return next(new Error(result));
 			
 			async.waterfall([
+				lsController.online,
 				lsController.auth,
 				lsController.get(sid,survey),
 				lsController.started(survey),
@@ -162,6 +163,7 @@ module.exports = function(auth, options){
 		var rid = [];
 
 		async.waterfall([
+			lsController.online,
 			lsController.auth,
 			lsController.get(sid,survey),
 			lsController.started(survey),
@@ -193,8 +195,10 @@ module.exports = function(auth, options){
 			if(err)
 				callback(err, result);
 			else{
-				if(classrooms){
-					if(surveys){
+				console.log(classrooms);
+				console.log(surveys);
+				if(classrooms && classrooms.length > 0){
+					if(surveys && surveys.length > 0){
 						var found = false;
 						for(var i = 0; i < surveys[0].classrooms.length; i++){
 							var c = surveys[0].classrooms[i];
@@ -209,11 +213,11 @@ module.exports = function(auth, options){
 							}
 						}
 						if(!found)
-							callback(true, "Class not found for this survey");
+							callback(true, "Classroom "+classrooms[0].key+"("+code+") has not started this survey");
 					}else
-						callback(true, "Survey not found.");	
+						callback(true, "Survey "+survey+" not found");	
 				}else
-					callback(true, "Classroom not found.");
+					callback(true, "Classroom not found for token: " + code);
 				
 			}
 		});
