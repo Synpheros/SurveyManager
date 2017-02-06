@@ -1,0 +1,54 @@
+doctype html
+html
+  head
+    title Material Test
+    link(rel='stylesheet', href='https://fonts.googleapis.com/icon?family=Material+Icons')
+    link(rel='stylesheet', href='https://code.getmdl.io/1.3.0/material.indigo-amber.min.css')
+    script(defer='', src='https://code.getmdl.io/1.3.0/material.min.js')
+    // Wide card with share menu button
+    style.
+      body{
+      background-color: lightgray;
+      }
+      .demo-card-wide{
+      width: 100%;
+      }
+      .demo-card-wide > .mdl-card__title {
+      color: #fff;
+      height: 176px;
+      background: gray;
+      }
+      .demo-card-wide > .mdl-card__menu {
+      color: #fff;
+      }
+      .fab-menu{
+      z-index: 1;
+      position: absolute;
+      bottom: 25px;
+      right: 25px;
+      list-style-type: none;
+      }
+      .fab-menu li{
+      display: inline;
+      padding-left: 10px;
+      }
+      .mdl-data-table tr td:first-child{
+        width: 50px;
+      }
+  body
+    .mdl-layout.mdl-js-layout.mdl-layout--fixed-header
+      header.mdl-layout__header
+        .mdl-layout__header-row
+          span.mdl-layout-title Survey Manager
+          .mdl-layout-spacer
+          nav.mdl-navigation
+            a.mdl-navigation__link(href='#') Home
+            a.mdl-navigation__link(href='#') About
+            a.mdl-navigation__link(href='#') Contact
+      .mdl-layout__drawer
+        span.mdl-layout-title Survey Manager
+        nav.mdl-navigation
+          a.mdl-navigation__link(href='#') Vista profesor
+          a.mdl-navigation__link(href='#') Clases
+          a.mdl-navigation__link(href='#') Encuestas
+      block content

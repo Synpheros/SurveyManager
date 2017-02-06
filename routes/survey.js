@@ -15,7 +15,6 @@ module.exports = function(auth, options){
 	var lsController = require('../lib/limesurvey/controller');
 
 	lsController.setOptions(options);
-	console.log(options);
 	lsController.setUser(user,pass);
 
 	surveyLib.setController(lsController);

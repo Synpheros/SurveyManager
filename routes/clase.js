@@ -1,4 +1,4 @@
-module.exports = function(auth){
+module.exports = function(auth,options){
 
 	var express = require('express'),
     router = express.Router();
@@ -7,6 +7,18 @@ module.exports = function(auth){
 
     var claseLib = require('../lib/clase');
     var officegen = require('officegen');
+
+    var user = 'admin';
+	var pass = '123456';
+
+	var claseLib = require('../lib/clase');
+	var surveyLib = require('../lib/survey');
+	var lsController = require('../lib/limesurvey/controller');
+
+	lsController.setOptions(options);
+	lsController.setUser(user,pass);
+
+	surveyLib.setController(lsController);
 
 	/* GET mis clases view page. */
 	router.get('/', auth(1), function(req, res, next) {
@@ -18,15 +30,82 @@ module.exports = function(auth){
 		], function (err, result) {
 			if(err)
 				return next(new Error(result));
-			res.render('classes_list', { title: 'Mis clases', clases: clases});
+			res.render('classes_list_material', { title: 'Mis clases', clases: clases});
 		});
 	});
 
 	router.get('/view/:class_id', auth(2), function(req, res, next) {
 		var classroom = new claseLib.Classroom(req.db, {_id: req.params.class_id});
+		var surveys = [];
+		var db = req.db;
 
 		classroom.load(function(err, result){
-			res.render('classes_view', {classroom: result});
+			async.waterfall([
+				surveyLib.listSurveys(db, {}, surveys),
+			], function (err, result) {
+				if(err){
+					console.log(err);
+					callback(err, result);
+				}
+				else{
+					var realsurveys = [];
+					for(var s = 0; s < surveys.length; s++)
+						for(var i = 0; i < surveys[s].classrooms.length; i++){
+							var c = surveys[s].classrooms[i];
+							if(c._id.toString() == classroom._id.toString()){
+								realsurveys.push(surveys[s]);
+								break;
+							}
+						}
+
+					var responsequerys = [];
+
+					var getAndAdd = function(survey){
+						return function(callback){
+							var waterfall = [];
+							var pre_r = [],post_r = [];
+
+							if(survey.pre)
+								waterfall.push(surveyLib.getResponses(survey.pre,pre_r))
+							if(survey.post)
+								waterfall.push(surveyLib.getResponses(survey.post,post_r))
+
+							async.waterfall(waterfall, function(err, result){
+								survey.pre_r = pre_r;
+								survey.post_r = post_r;
+								callback(null);
+							});
+						}
+					}
+
+					for(var i = 0; i < realsurveys.length; i++){
+						console.log(i);
+						responsequerys.push(getAndAdd(realsurveys[i]));
+					}
+
+					async.waterfall(responsequerys, function (err, result) {
+						res.render('classes_view_material', {classroom: classroom, surveys: realsurveys});
+					});
+				}
+			});
+		});
+	});
+
+	router.get('/delete/:class_id', auth(2), function(req, res, next) {
+		var classroom = new claseLib.Classroom(req.db, {_id: req.params.class_id});
+		var surveys = [];
+		var db = req.db;
+
+		classroom.load(function(err, result){
+			if(err)
+				return next(new Error(err));
+
+			classroom.delete(function(err,result){
+				if(err)
+					return next(new Error(err));
+
+				res.redirect('../../classes');
+			});
 		});
 	});
 
@@ -146,10 +225,6 @@ module.exports = function(auth){
 			});
 		});
 	});
-
-
-	
-
 
 	router.post('/', auth(1), function(req, res, next){
 		var db = req.db;

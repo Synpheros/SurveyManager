@@ -1,0 +1,51 @@
+extends layoutmaterial
+
+block content
+
+      main.mdl-layout__content
+        .page-content
+          .mdl-grid
+            each classroom in clases
+              .mdl-cell.mdl-cell--4-col
+                .demo-card-wide.mdl-card.mdl-shadow--2dp
+                  .mdl-card__title
+                    h2.mdl-card__title-text Class: !{classroom.key}
+                  .mdl-card__supporting-text
+                    | With !{classroom.codes.length} learners
+                  .mdl-card__actions.mdl-card--border
+                    a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect(href="classes/view/#{classroom._id}")
+                      | View Class
+                  .mdl-card__menu
+                    a(href="classes/delete/#{classroom._id}").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+                      i.material-icons delete
+      ul.fab-menu
+        li
+          button.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal
+            i.material-icons add
+      dialog.mdl-dialog.mdl-transition-in
+        form(name="altaclase", method="post", action="../classes", enctype="multipart/form-data")
+          .mdl-dialog__title
+            | Add class
+          .mdl-dialog__content
+            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input#sample3.mdl-textfield__input(type='text',name="key")
+              label.mdl-textfield__label(for='sample3') Class name
+            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input#sample4.mdl-textfield__input(type='text', pattern='-?[0-9]*(\.[0-9]+)?', name="learners")
+              label.mdl-textfield__label(for='sample4') Number of learners
+              span.mdl-textfield__error Input is not a number!
+          .mdl-dialog__actions.mdl-dialog__actions
+            button.mdl-button(type='submit') Add
+            button.mdl-button.close(type='button') Cancel
+      script.
+        var dialog = document.querySelector('dialog');
+        var showModalButton = document.querySelector('.show-modal');
+        if (! dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+        }
+        showModalButton.addEventListener('click', function() {
+        dialog.showModal();
+        });
+        dialog.querySelector('.close').addEventListener('click', function() {
+        dialog.close();
+        });

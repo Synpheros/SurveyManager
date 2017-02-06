@@ -43,7 +43,7 @@
     app.use('/', router);
 
 	app.use('/users', require('./user.js')(auth(1)));
-	app.use('/classes', require('./clase.js')(auth));
+	app.use('/classes', require('./clase.js')(auth, options));
 	app.use('/surveys', require('./survey.js')(auth(1), options));
 
 }
