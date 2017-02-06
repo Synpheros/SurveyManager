@@ -127,20 +127,19 @@ module.exports = function(auth){
 		classroom.load(function(err, result){
 			var pdf = require('html-pdf');
 
-			var html = '<!DOCTYPE html><html><head><title></title><style type="text/css">body{padding:10px;} table{font-size: 27px;font-family: "DejaVu Sans Mono"; border: solid 2px black;border-collapse: collapse;}table td{border: solid 2px black;text-align: center;}</style></head>';
+			var html = '<!DOCTYPE html><html><head><title></title><style type="text/css">body{padding:10px} table{font-size: 26px;font-family: "DejaVu Sans Mono"; border: solid 2px black;border-collapse: collapse;}table td{border: solid 2px black;text-align: center;}</style></head>';
 			html += '<body><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
 
 			for(var i = 0; i < classroom.codes.length; i++){
-				if(i==27)
+				if(i==30)
 					html += '</table></body><table><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr><br><br>';
-
 				html += '<tr><td>'+ (i+1) + '</td><td></td><td>'+classroom.codes[i].code+'</td><td>'+classroom.codes[i].code+'</td><td>'+classroom.codes[i].code+'</td><td>'+classroom.codes[i].code+'</td></tr>';
 			}
 
 			html += '</table></body></html>';
 
 
-			pdf.create(html, { format: 'Letter' }).toFile('public/pdf/'+classroom._id.toString()+'.pdf', function(err, response) {
+			pdf.create(html, { width: '602px', height: '852px' /*format: 'A4'*/ }).toFile('public/pdf/'+classroom._id.toString()+'.pdf', function(err, response) {
 				if (err) return console.log(err);
 				res.redirect('../../pdf/'+classroom._id+'.pdf');
 			});
