@@ -1,0 +1,54 @@
+extends layoutmaterial
+
+block content
+
+      main.mdl-layout__content
+        .page-content
+          .mdl-grid
+            each survey in surveys
+              .mdl-cell.mdl-cell--4-col
+                .demo-card-wide.mdl-card.mdl-shadow--2dp
+                  .mdl-card__title
+                    h2.mdl-card__title-text Survey: !{survey.name}
+                  .mdl-card__supporting-text
+                    | Pre: !{survey.pre}
+                    | Post: !{survey.post}
+                  .mdl-card__actions.mdl-card--border
+                    a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect(href="surveys/view/#{survey._id}")
+                      | View survey
+                  .mdl-card__menu
+                    a(href="surveys/delete/#{survey._id}").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+                      i.material-icons delete
+      ul.fab-menu
+        li
+          button.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal
+            i.material-icons add
+      dialog.mdl-dialog.mdl-transition-in
+        form(method="post", action="../surveys", enctype="multipart/form-data")
+          .mdl-dialog__title
+            | Add survey
+          .mdl-dialog__content
+            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input#sample3.mdl-textfield__input(type='text',name="name")
+              label.mdl-textfield__label(for='sample3') Survey name
+            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input(type='file', name="pre", placeholder='Survey shown pre-game')
+              label.mdl-textfield__label(for='pre') Survey shown pre-game
+            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input(type='file', name="post", placeholder='Survey shown post-game')
+              label.mdl-textfield__label(for='post') Survey shown post-game
+          .mdl-dialog__actions.mdl-dialog__actions
+            button.mdl-button(type='submit') Add
+            button.mdl-button.close(type='button') Cancel
+      script.
+        var dialog = document.querySelector('dialog');
+        var showModalButton = document.querySelector('.show-modal');
+        if (! dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+        }
+        showModalButton.addEventListener('click', function() {
+        dialog.showModal();
+        });
+        dialog.querySelector('.close').addEventListener('click', function() {
+        dialog.close();
+        });

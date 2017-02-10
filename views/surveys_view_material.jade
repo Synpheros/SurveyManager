@@ -1,0 +1,63 @@
+extends layoutmaterial
+
+block content
+
+    main.mdl-layout__content
+      .page-content
+        .mdl-grid
+          .mdl-shadow--2dp.mdl-color--white.mdl-cell.mdl-cell--8-col
+            .mdl-card__title
+              h2.mdl-card__title-text Survey #{survey.name}
+            .mdl-card__supporting-text
+              | Pre and post surveys:
+            .mdl-card__supporting-text
+              | !{survey.pre}, !{survey.post}
+          .mdl-cell.mdl-cell--4-col.mdl-cell--8-col-tablet.mdl-grid.mdl-grid--no-spacing
+            .mdl-card.mdl-shadow--2dp.mdl-cell.mdl-cell--4-col.mdl-cell--3-col-tablet.mdl-cell--12-col-desktop
+              .mdl-card__title
+                h2.mdl-card__title-text Classes
+              .mdl-card__supporting-text
+                | Classes assigned to this survey.
+              .mdl-card__supporting-text
+                ul.demo-list-control.mdl-list
+                  each c in survey.classrooms
+                    li.mdl-list__item
+                      span.mdl-list__item-primary-content
+                        i.material-icons.mdl-list__item-avatar group
+                        a.mdl-button(href="../../classes/view/#{c._id}") !{auxclass[c._id].key}
+                      span.mdl-list__item-secondary-action
+                        label.mdl-switch.mdl-js-switch.mdl-js-ripple-effect(for='list-switch-#{c._id}')
+                          input.mdl-switch__input(id="list-switch-#{c._id}", type='checkbox', checked=(c.active ? "checked" : undefined), onclick="changed('#{c._id}')")
+              .mdl-card__actions.mdl-card--border
+                button.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect(data-upgraded=',MaterialButton,MaterialRipple').show-modal
+                  | Add Survey
+                  span.mdl-button__ripple-container
+                    span.mdl-ripple.is-animating
+            .mdl-cell--1-col
+              br
+    dialog.mdl-dialog.mdl-transition-in
+      .mdl-dialog__title
+        | Add classroom
+      .mdl-dialog__content
+        each classroom in classrooms
+          form(name="seleccionarclase", method="post", action="../addclass", enctype="multipart/form-data")
+            input(type="hidden",name="survey",value="#{survey._id}")
+            input(type="hidden",name="classroom",value="#{classroom._id}")
+            button.mdl-button(type='submit') !{classroom.key}
+      .mdl-dialog__actions.mdl-dialog__actions
+        button.mdl-button.close(type='button') Cancel
+    script.
+      var dialog = document.querySelector('dialog');
+      var showModalButton = document.querySelector('.show-modal');
+      if (! dialog.showModal) {
+      dialogPolyfill.registerDialog(dialog);
+      }
+      showModalButton.addEventListener('click', function() {
+      dialog.showModal();
+      });
+      dialog.querySelector('.close').addEventListener('click', function() {
+      dialog.close();
+      });
+      var changed = function(id){
+        window.location = "../../surveys/switch?classroom="+id+"&survey=#{survey._id}";
+      }

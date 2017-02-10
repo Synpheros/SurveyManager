@@ -11,7 +11,7 @@ module.exports = function(auth){
 
 	/* GET login page. */
 	router.get('/login', function(req, res, next) {
-		res.render('login', { title: 'Acceso profesor' });
+		res.render('login_material', { title: 'Acceso profesor' });
 	});
 
 	/* GET register page. */
