@@ -36,20 +36,43 @@ html
       .mdl-data-table tr td:first-child{
         width: 50px;
       }
+      .mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
+        color: white;
+      }
+
+      .mdl-layout__drawer .mdl-navigation .mdl-navigation__link i {
+        margin-right: 32px;
+      }
+      .mdl-navigation__link.whited{
+        color: white;
+      }
   body
-    .mdl-layout.mdl-js-layout.mdl-layout--fixed-header
+    .mdl-layout.mdl-js-layout.mdl-layout--fixed-drawer.mdl-layout--fixed-header
       header.mdl-layout__header
         .mdl-layout__header-row
           span.mdl-layout-title Survey Manager
+          // Add spacer, to align navigation to the right
           .mdl-layout-spacer
+          // Navigation
           nav.mdl-navigation
-            a.mdl-navigation__link(href='#') Home
-            a.mdl-navigation__link(href='#') About
-            a.mdl-navigation__link(href='#') Contact
-      .mdl-layout__drawer
-        span.mdl-layout-title Survey Manager
-        nav.mdl-navigation
-          a.mdl-navigation__link(href='#') Vista profesor
-          a.mdl-navigation__link(href='#') Clases
-          a.mdl-navigation__link(href='#') Encuestas
+            a.mdl-navigation__link(href='/api/proxy/surveymanager/users') Home
+            a.mdl-navigation__link(href='') About
+            a.mdl-navigation__link(href='/api/proxy/surveymanager/users/logout') Logout
+      .mdl-layout__drawer.mdl-color--indigo-800
+        nav.mdl-navigation.whited
+          a.mdl-navigation__link.whited(href='/api/proxy/surveymanager/users')
+            i.material-icons(role='presentation') home
+            | Home
+          a.mdl-navigation__link.whited(href='/api/proxy/surveymanager/classes')
+            i.material-icons(role='presentation') people
+            | Classes
+          a.mdl-navigation__link.whited(href='/api/proxy/surveymanager/surveys')
+            i.material-icons(role='presentation') list
+            | Surveys
+          .mdl-layout-spacer
+          a.mdl-navigation__link.whited(href='')
+            i.material-icons(role='presentation') help_outline
+            span.visuallyhidden Help
+
+
       block content

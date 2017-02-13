@@ -28,9 +28,13 @@ block content
                       span.mdl-list__item-secondary-action
                         label.mdl-switch.mdl-js-switch.mdl-js-ripple-effect(for='list-switch-#{c._id}')
                           input.mdl-switch__input(id="list-switch-#{c._id}", type='checkbox', checked=(c.active ? "checked" : undefined), onclick="changed('#{c._id}')")
+                        form(method="post", action="../delclass", enctype="multipart/form-data")
+                          input(type="hidden",name="survey",value="#{survey._id}")
+                          input(type="hidden",name="classroom",value="#{c._id}")
+                          button.mdl-button(type='submit') Borrar
               .mdl-card__actions.mdl-card--border
                 button.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect(data-upgraded=',MaterialButton,MaterialRipple').show-modal
-                  | Add Survey
+                  | Add Classroom
                   span.mdl-button__ripple-container
                     span.mdl-ripple.is-animating
             .mdl-cell--1-col

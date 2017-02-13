@@ -14,6 +14,11 @@ module.exports = function(auth){
 		res.render('login_material', { title: 'Acceso profesor' });
 	});
 
+	router.get('/logout', function(req, res, next){
+		req.session.user = null;
+		res.redirect('login');
+	})
+
 	/* GET register page. */
 	router.get('/register', function(req, res, next) {
 		res.render('register', { title: 'Registro profesor'});
@@ -35,7 +40,7 @@ module.exports = function(auth){
 		classcollection.find({"user": req.session.user._id}, function(err,docs) {
 			if (err) clases = 0;
 			else clases = docs.length;
-			res.render('teacherview', {username : req.session.user.username, clases: clases});
+			res.render('home', {username : req.session.user.username, clases: clases});
 		});
 	});
 

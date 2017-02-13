@@ -125,6 +125,20 @@ module.exports = function(auth, options){
 		})
 	});
 
+	router.post('/delclass', auth, function(req, res) {
+		var classroom = new claseLib.Classroom(req.db, {_id: req.body.classroom});
+		classroom.load(function(err,result){
+			var survey = new surveyLib.Survey(req.db, {_id: req.body.survey});
+			survey.load(function(err,result){
+				survey.delClassroom(classroom, function(err,result){
+					survey.save(function(err,result){
+						res.redirect('../surveys/view/' + req.body.survey);
+					});
+				})
+			})
+		})
+	});
+
 	router.get('/switch', auth, function(req,res,next){
 		if(!req.query.survey)
 			return next(new Error("Unknown survey"));
