@@ -15,7 +15,6 @@ module.exports = function(auth, options){
 	var lsController = require('../lib/limesurvey/controller');
 
 	lsController.setOptions(options);
-	console.log(options);
 	lsController.setUser(user,pass);
 
 	surveyLib.setController(lsController);
@@ -31,12 +30,52 @@ module.exports = function(auth, options){
 			var auxclass = [];
 			for(var i = 0; i<classrooms.length; i++)
 				auxclass[classrooms[i]._id] = classrooms[i];
-			res.render('surveys_list', {surveys: surveys, classrooms: classrooms, auxclass: auxclass});
+			res.render('surveys_list_material', {surveys: surveys, classrooms: classrooms, auxclass: auxclass});
+		});
+	});
+
+	router.get('/view/:survey_id', auth, function(req, res, next){
+		var survey = new surveyLib.Survey(req.db, {_id: req.params.survey_id});
+		var classrooms = [];
+		var db = req.db;
+
+		survey.load(function(err, result){
+			async.waterfall([
+				claseLib.listClassrooms(db, {user: req.session.user._id}, classrooms),
+			], function (err, result) {
+				if(err){
+					console.log(err);
+					callback(err, result);
+				}
+				else{
+					var auxclass = [];
+					for(var i = 0; i<classrooms.length; i++)
+						auxclass[classrooms[i]._id] = classrooms[i];
+					res.render('surveys_view_material', {survey: survey, classrooms: classrooms, auxclass: auxclass});
+				}
+			});
 		});
 	});
 
 	router.get('/new', auth, function(req, res, next){
 		res.render('surveys_new');
+	});
+
+	router.get('/delete/:survey_id', auth, function(req, res, next) {
+		var survey = new surveyLib.Survey(req.db, {_id: req.params.survey_id});
+		var db = req.db;
+
+		survey.load(function(err, result){
+			if(err)
+				return next(new Error(err));
+
+			survey.delete(function(err,result){
+				if(err)
+					return next(new Error(err));
+
+				res.redirect('../../surveys');
+			});
+		});
 	});
 
 	//###################################################
@@ -79,7 +118,21 @@ module.exports = function(auth, options){
 			survey.load(function(err,result){
 				survey.addClassroom(classroom, function(err,result){
 					survey.save(function(err,result){
-						res.redirect('../surveys');
+						res.redirect('../surveys/view/' + req.body.survey);
+					});
+				})
+			})
+		})
+	});
+
+	router.post('/delclass', auth, function(req, res) {
+		var classroom = new claseLib.Classroom(req.db, {_id: req.body.classroom});
+		classroom.load(function(err,result){
+			var survey = new surveyLib.Survey(req.db, {_id: req.body.survey});
+			survey.load(function(err,result){
+				survey.delClassroom(classroom, function(err,result){
+					survey.save(function(err,result){
+						res.redirect('../surveys/view/' + req.body.survey);
 					});
 				})
 			})
@@ -111,7 +164,7 @@ module.exports = function(auth, options){
 					if(err)
 						return next(new Error(err));
 
-					res.redirect('../surveys');
+					res.redirect('../surveys/view/' + req.query.survey);
 				})
 			})
 		})
@@ -189,7 +242,7 @@ module.exports = function(auth, options){
 		var surveys = [], classrooms = [];
 
 		async.waterfall([
-			claseLib.listClassrooms(db, {codes: {code: code}}, classrooms),
+			claseLib.listClassrooms(db, {codes: code}, classrooms),
 			surveyLib.listSurveys(db, {$or: [{pre: survey}, {post: survey}]}, surveys),
 		], function (err, result) {
 			if(err)

@@ -1,0 +1,81 @@
+extends layoutmaterial
+
+block content
+
+      main.mdl-layout__content
+        .page-content
+          .mdl-grid
+            each classroom in clases
+              .mdl-cell.mdl-cell--4-col.mdl-cell--top
+                .demo-card-wide.mdl-card.mdl-shadow--2dp
+                  .mdl-card__title
+                    h2.mdl-card__title-text Class: !{classroom.key}
+                  .mdl-card__supporting-text
+                    | With !{classroom.codes.length} learners
+                  .mdl-card__actions.mdl-card--border
+                    a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect(href="classes/view/#{classroom._id}")
+                      | View Class
+                  .mdl-card__menu
+                    a(href="classes/delete/#{classroom._id}").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+                      i.material-icons delete
+      ul.fab-menu
+        li
+          button.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal.import_button
+            i.material-icons file_upload
+        li
+          button.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal.add_button
+            i.material-icons add
+      dialog(id="add_dialog").mdl-dialog.mdl-transition-in
+        form(name="altaclase", method="post", action="../classes", enctype="multipart/form-data")
+          .mdl-dialog__title
+            | Add class
+          .mdl-dialog__content
+            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input#sample3.mdl-textfield__input(type='text',name="key")
+              label.mdl-textfield__label(for='sample3') Class name
+            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input#sample4.mdl-textfield__input(type='text', pattern='-?[0-9]*(\.[0-9]+)?', name="learners")
+              label.mdl-textfield__label(for='sample4') Number of learners
+              span.mdl-textfield__error Input is not a number!
+          .mdl-dialog__actions.mdl-dialog__actions
+            button.mdl-button(type='submit') Add
+            button.mdl-button.close(type='button') Cancel
+      dialog(id="import_dialog").mdl-dialog.mdl-transition-in.import_dialog
+        form(name="altaclase", method="post", action="../classes", enctype="multipart/form-data")
+          .mdl-dialog__title
+            | Import
+          .mdl-dialog__content
+            input(type='file',name="csv")
+            label.mdl-radio.mdl-js-radio.mdl-js-ripple-effect(for='separator1')
+              input#separator1.mdl-radio__button(type='radio', name='separator', value=',', checked)
+              span.mdl-radio__label Use comma: ","
+            label.mdl-radio.mdl-js-radio.mdl-js-ripple-effect(for='separator2')
+              input#separator2.mdl-radio__button(type='radio', name='separator', value=';')
+              span.mdl-radio__label Use dot&comma: ";"
+          .mdl-dialog__actions.mdl-dialog__actions
+            button.mdl-button(type='submit') Add
+            button.mdl-button.close(type='button') Cancel
+      script.
+        var add_dialog = document.querySelector('#add_dialog');
+        var add_button = document.querySelector('.add_button');
+        if (! add_dialog.showModal) {
+          dialogPolyfill.registerDialog(add_dialog);
+        }
+        add_button.addEventListener('click', function() {
+          add_dialog.showModal();
+        });
+        add_dialog.querySelector('.close').addEventListener('click', function() {
+          add_dialog.close();
+        });
+
+        var import_dialog = document.querySelector('#import_dialog');
+        var import_button = document.querySelector('.import_button');
+        if (! import_dialog.showModal) {
+          dialogPolyfill.registerDialog(import_dialog);
+        }
+        import_button.addEventListener('click', function() {
+          import_dialog.showModal();
+        });
+        import_dialog.querySelector('.close').addEventListener('click', function() {
+          import_dialog.close();
+        });

@@ -1,0 +1,64 @@
+extends layoutmaterial
+
+block content
+
+    main.mdl-layout__content
+      .page-content
+        .mdl-grid
+          .mdl-shadow--2dp.mdl-color--white.mdl-cell.mdl-cell--8-col
+            .mdl-card__title
+              h2.mdl-card__title-text Clase #{classroom.key}
+            .mdl-card__supporting-text
+              | Identifiers included in this class, each one represents a learner:
+            .mdl-card__supporting-text
+              table.mdl-data-table.mdl-js-data-table.mdl-data-table--selectable.mdl-shadow--2dp(style='width: 100%')
+                thead
+                  tr
+                    th.mdl-data-table__cell--non-numeric Code
+                    each survey in surveys
+                      th
+                        !{survey.name} (!{survey.pre_r.length}/!{classroom.codes.length}) (!{survey.post_r.length}/!{classroom.codes.length})
+                    th
+                      button#demo-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
+                        i.material-icons delete
+                      button#demo-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
+                        i.material-icons add
+                tbody
+                  each code in classroom.codes
+                    tr
+                      td.mdl-data-table__cell--non-numeric !{code}
+                      each survey in surveys
+                        td
+                          !{survey.pre && survey.pre_r[code] ? (survey.pre_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'} / 
+                          !{survey.post && survey.post_r[code] ? (survey.post_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'}
+                      td
+          .mdl-cell.mdl-cell--4-col.mdl-cell--8-col-tablet.mdl-grid.mdl-grid--no-spacing
+            .mdl-card.mdl-shadow--2dp.mdl-cell.mdl-cell--4-col.mdl-cell--3-col-tablet.mdl-cell--12-col-desktop
+              .mdl-card__title
+                h2.mdl-card__title-text Surveys
+              .mdl-card__supporting-text
+                | Surveys assigned to this class.
+              .mdl-card__supporting-text
+                ul.demo-list-control.mdl-list
+                  each survey in surveys
+                    li.mdl-list__item
+                      span.mdl-list__item-primary-content
+                        i.material-icons.mdl-list__item-avatar list
+                        | !{survey.name}
+                      span.mdl-list__item-secondary-action
+                        label.mdl-switch.mdl-js-switch.mdl-js-ripple-effect(for='list-switch-1')
+                          input#list-switch-1.mdl-switch__input(type='checkbox', checked='')
+              .mdl-card__actions.mdl-card--border
+                a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect(data-upgraded=',MaterialButton,MaterialRipple')
+                  | Add Survey
+                  span.mdl-button__ripple-container
+                    span.mdl-ripple.is-animating
+            .mdl-cell--1-col
+              br
+    ul.fab-menu
+      li
+        a(href="../pdf/#{classroom._id}",target="_blank").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal
+          img(src="../../icon/pdf.png",width="55px")
+      li
+        a(href="../word/#{classroom._id}",target="_blank").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal
+          img(src="../../icon/word.png",width="55px")
