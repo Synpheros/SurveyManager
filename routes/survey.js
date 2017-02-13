@@ -19,7 +19,7 @@ module.exports = function(auth, options){
 
 	surveyLib.setController(lsController);
 
-	router.get('/', auth, function(req, res, next){
+	router.get('/', auth(1), function(req, res, next){
 		var surveys = [], classrooms = [];
 		var db = req.db;
 
@@ -34,7 +34,7 @@ module.exports = function(auth, options){
 		});
 	});
 
-	router.get('/view/:survey_id', auth, function(req, res, next){
+	router.get('/view/:survey_id', auth(2), function(req, res, next){
 		var survey = new surveyLib.Survey(req.db, {_id: req.params.survey_id});
 		var classrooms = [];
 		var db = req.db;
@@ -57,11 +57,11 @@ module.exports = function(auth, options){
 		});
 	});
 
-	router.get('/new', auth, function(req, res, next){
+	router.get('/new', auth(1), function(req, res, next){
 		res.render('surveys_new');
 	});
 
-	router.get('/delete/:survey_id', auth, function(req, res, next) {
+	router.get('/delete/:survey_id', auth(2), function(req, res, next) {
 		var survey = new surveyLib.Survey(req.db, {_id: req.params.survey_id});
 		var db = req.db;
 
@@ -81,7 +81,7 @@ module.exports = function(auth, options){
 	//###################################################
 	//################## ALTAENCUESTA ###################
 	//###################################################
-	router.post('/', auth, function(req, res, next) {
+	router.post('/', auth(1), function(req, res, next) {
 		var pre, post;
 
 		if (!req.files) {
@@ -111,7 +111,7 @@ module.exports = function(auth, options){
 			survey.setPost(req.files.post,function(err,result){ saveAndRender(survey); });
 	});
 
-	router.post('/addclass', auth, function(req, res) {
+	router.post('/addclass', auth(1), function(req, res) {
 		var classroom = new claseLib.Classroom(req.db, {_id: req.body.classroom});
 		classroom.load(function(err,result){
 			var survey = new surveyLib.Survey(req.db, {_id: req.body.survey});
@@ -125,7 +125,7 @@ module.exports = function(auth, options){
 		})
 	});
 
-	router.post('/delclass', auth, function(req, res) {
+	router.post('/delclass', auth(1), function(req, res) {
 		var classroom = new claseLib.Classroom(req.db, {_id: req.body.classroom});
 		classroom.load(function(err,result){
 			var survey = new surveyLib.Survey(req.db, {_id: req.body.survey});
@@ -139,7 +139,7 @@ module.exports = function(auth, options){
 		})
 	});
 
-	router.get('/switch', auth, function(req,res,next){
+	router.get('/switch', auth(1), function(req,res,next){
 		if(!req.query.survey)
 			return next(new Error("Unknown survey"));
 
