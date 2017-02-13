@@ -20,9 +20,12 @@ block content
                       i.material-icons delete
       ul.fab-menu
         li
-          button.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal
+          button.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal.import_button
+            i.material-icons file_upload
+        li
+          button.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal.add_button
             i.material-icons add
-      dialog.mdl-dialog.mdl-transition-in
+      dialog(id="add_dialog").mdl-dialog.mdl-transition-in
         form(name="altaclase", method="post", action="../classes", enctype="multipart/form-data")
           .mdl-dialog__title
             | Add class
@@ -37,15 +40,42 @@ block content
           .mdl-dialog__actions.mdl-dialog__actions
             button.mdl-button(type='submit') Add
             button.mdl-button.close(type='button') Cancel
+      dialog(id="import_dialog").mdl-dialog.mdl-transition-in.import_dialog
+        form(name="altaclase", method="post", action="../classes", enctype="multipart/form-data")
+          .mdl-dialog__title
+            | Import
+          .mdl-dialog__content
+            input(type='file',name="csv")
+            label.mdl-radio.mdl-js-radio.mdl-js-ripple-effect(for='separator1')
+              input#separator1.mdl-radio__button(type='radio', name='separator', value=',', checked)
+              span.mdl-radio__label Use comma: ","
+            label.mdl-radio.mdl-js-radio.mdl-js-ripple-effect(for='separator2')
+              input#separator2.mdl-radio__button(type='radio', name='separator', value=';')
+              span.mdl-radio__label Use dot&comma: ";"
+          .mdl-dialog__actions.mdl-dialog__actions
+            button.mdl-button(type='submit') Add
+            button.mdl-button.close(type='button') Cancel
       script.
-        var dialog = document.querySelector('dialog');
-        var showModalButton = document.querySelector('.show-modal');
-        if (! dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog);
+        var add_dialog = document.querySelector('#add_dialog');
+        var add_button = document.querySelector('.add_button');
+        if (! add_dialog.showModal) {
+          dialogPolyfill.registerDialog(add_dialog);
         }
-        showModalButton.addEventListener('click', function() {
-        dialog.showModal();
+        add_button.addEventListener('click', function() {
+          add_dialog.showModal();
         });
-        dialog.querySelector('.close').addEventListener('click', function() {
-        dialog.close();
+        add_dialog.querySelector('.close').addEventListener('click', function() {
+          add_dialog.close();
+        });
+
+        var import_dialog = document.querySelector('#import_dialog');
+        var import_button = document.querySelector('.import_button');
+        if (! import_dialog.showModal) {
+          dialogPolyfill.registerDialog(import_dialog);
+        }
+        import_button.addEventListener('click', function() {
+          import_dialog.showModal();
+        });
+        import_dialog.querySelector('.close').addEventListener('click', function() {
+          import_dialog.close();
         });

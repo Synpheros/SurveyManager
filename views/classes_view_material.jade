@@ -26,11 +26,11 @@ block content
                 tbody
                   each code in classroom.codes
                     tr
-                      td.mdl-data-table__cell--non-numeric !{code.code}
+                      td.mdl-data-table__cell--non-numeric !{code}
                       each survey in surveys
                         td
-                          !{survey.pre && survey.pre_r[code.code] ? (survey.pre_r[code.code].submitdate? 'Finished' : 'Started') : 'Not Found'} / 
-                          !{survey.post && survey.post_r[code.code] ? (survey.post_r[code.code].submitdate? 'Finished' : 'Started') : 'Not Found'}
+                          !{survey.pre && survey.pre_r[code] ? (survey.pre_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'} / 
+                          !{survey.post && survey.post_r[code] ? (survey.post_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'}
                       td
           .mdl-cell.mdl-cell--4-col.mdl-cell--8-col-tablet.mdl-grid.mdl-grid--no-spacing
             .mdl-card.mdl-shadow--2dp.mdl-cell.mdl-cell--4-col.mdl-cell--3-col-tablet.mdl-cell--12-col-desktop

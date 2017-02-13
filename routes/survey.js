@@ -61,6 +61,23 @@ module.exports = function(auth, options){
 		res.render('surveys_new');
 	});
 
+	router.get('/delete/:survey_id', auth, function(req, res, next) {
+		var survey = new surveyLib.Survey(req.db, {_id: req.params.survey_id});
+		var db = req.db;
+
+		survey.load(function(err, result){
+			if(err)
+				return next(new Error(err));
+
+			survey.delete(function(err,result){
+				if(err)
+					return next(new Error(err));
+
+				res.redirect('../../surveys');
+			});
+		});
+	});
+
 	//###################################################
 	//################## ALTAENCUESTA ###################
 	//###################################################
@@ -209,7 +226,7 @@ module.exports = function(auth, options){
 		var surveys = [], classrooms = [];
 
 		async.waterfall([
-			claseLib.listClassrooms(db, {codes: {code: code}}, classrooms),
+			claseLib.listClassrooms(db, {codes: code}, classrooms),
 			surveyLib.listSurveys(db, {$or: [{pre: survey}, {post: survey}]}, surveys),
 		], function (err, result) {
 			if(err)

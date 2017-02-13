@@ -226,36 +226,133 @@ module.exports = function(auth,options){
 		});
 	});
 
-	router.post('/', auth(1), function(req, res, next){
+	router.get('/rebuild', function(req, res, next) {
+		var clases = [];
 		var db = req.db;
 
-		var codes = generateCodes(req.body.learners, 4, 'A');
+		async.waterfall([
+			claseLib.listClassrooms(db,{},clases)
+		], function (e, r) {
+			if(e)
+				return next(new Error(result));
 
-		var classroom = new claseLib.Classroom(req.db, {
-			user: req.session.user._id,
-			key: req.body.key,
-			codes: codes
+			var total = [];
+			var toSave = [];
+
+			for(var i = 0; i < clases.length; i++){
+				var clase = new claseLib.Classroom(db, clases[i]);
+				var codes = [];
+				for(var j = 0; j < clases[i].codes.length; j++)
+					codes.push(clases[i].codes[j].code);
+				
+				clase.codes = codes;
+				
+				clase.save(function(){});
+			}
+
+			if(e)
+				res.json({message: "Error: " + err, error: true});
+			else
+				res.json({message: "Rebuilt"});
 		});
-
-		classroom.save(function(err, result){
-			if(err)
-				return next(new Error(err));
-
-			res.redirect('classes/view/' + result._id);
-		})
 	});
 
-	function generateCodes(number, length, chars){
-		var codes = [];
+	router.post('/', auth(1), function(req, res, next){
+		var db = req.db;
+		var classrooms = [];
+
+		if(req.files) {
+			//IMPORT MODE
+			if(req.files.csv.name != ''){
+				var csv = new Buffer(req.files.csv.data, '7bit').toString();
+
+				csv = csv.split(/\r?\n|\r/);
+
+				var classes = [];
+				for(var i = 1; i < csv.length; i++){
+					csv[i] = csv[i].split(req.body.separator);
+
+					if(csv[i][1]){
+						if(!classes[csv[i][1]])
+							classes[csv[i][1]] = [];
+						
+						classes[csv[i][1]].push(csv[i][0]);
+					}
+				}
+
+				var total = 0;
+				var saveAll = function(n){
+					return function(){
+						total++;
+
+						if(total >= n){
+							res.redirect('classes');
+						}
+					}
+				}
+				
+				for(var i in classes){
+					var classroom = new claseLib.Classroom(req.db, {
+						key: i,
+						user: req.session.user._id,
+						codes: classes[i]
+					});
+
+					classroom.save(saveAll(classes.length));
+				}
+			}
+			
+			return;
+		}else{
+			async.waterfall([
+				claseLib.listClassrooms(db,{},classrooms)
+			], function (err, result) {
+				if(err)
+					return next(new Error(result));
+
+				var codes = []
+
+				if(classrooms.length > 0)
+					for(var i = 0; i < classrooms.length; i++)
+						codes = codes.concat(classrooms[i].codes)
+
+				console.log(codes);
+
+				codes = generateCodes(req.body.learners, 4, 'A',codes);
+
+				console.log(codes);
+
+				var classroom = new claseLib.Classroom(req.db, {
+					user: req.session.user._id,
+					key: req.body.key,
+					codes: codes
+				});
+
+				console.log(classroom);
+
+				classroom.save(function(err, result){
+					if(err)
+						return next(new Error(err));
+
+					res.redirect('classes/view/' + classroom._id);
+				})
+			});
+		}
+	});
+
+	function generateCodes(number, length, chars, codes = []){
+		var ret = [];
 		for (var i=0; i < number; i++) {
 			var code = randomString(4, 'A');
-			while (repeated(code, codes)) {
+			while (repeated(code, codes) > -1) {
 				var code = randomString(4, 'A');
 			}
-			var entry = {code : code};
-			codes.push(entry);
+			codes.push(code);
+			ret.push(code);
+
+			console.log(code);
 		};
-		return codes;
+		return ret;
 	}
 
 	function randomString(length, chars) {
@@ -271,14 +368,16 @@ module.exports = function(auth,options){
 
 	// funcion auxiliar para chequear si un numero ya ha sido usado
 	function repeated(codigo, usados) {
-		var repe = false;
+		/*var repe = false;
 		for (var i = 0; i < usados.length; i++) {
 			if (codigo == usados[i]) {
 				repe = true;
 			}
-		}
-		return repe;
+		}*/
+		return usados.indexOf(codigo);
 	}
+
+
 
 	return router;
 }
