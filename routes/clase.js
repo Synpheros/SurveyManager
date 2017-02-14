@@ -78,13 +78,23 @@ module.exports = function(auth,options){
 						}
 					}
 
+					var traces = [];
+
+					for(var i = 0; i < classroom.codes.length; i++){
+						var exist = fs.existsSync('public/traces/' + classroom.codes[i] + '.csv');
+						if(exist)
+							traces[classroom.codes[i]] = true;
+					}
+
+					console.log(traces);
+
 					for(var i = 0; i < realsurveys.length; i++){
 						console.log(i);
 						responsequerys.push(getAndAdd(realsurveys[i]));
 					}
 
 					async.waterfall(responsequerys, function (err, result) {
-						res.render('classes_view_material', {classroom: classroom, surveys: realsurveys});
+						res.render('classes_view_material', {classroom: classroom, surveys: realsurveys, traces});
 					});
 				}
 			});
@@ -225,6 +235,29 @@ module.exports = function(auth,options){
 		});
 	});
 
+	router.get('/export/:class_id', function(req, res, next) {
+		var classroom = new claseLib.Classroom(req.db, {_id: req.params.class_id});
+		var survey = req.query.survey;
+
+		classroom.load(function(err, result){
+			var responses = [];
+			async.waterfall([
+				surveyLib.getClassResponses(survey,classroom, responses)
+			], function(e,r){
+				var filename = classroom.key+"_"+survey+".csv";
+
+				fs.writeFile("public/csv/"+filename, responses.content, function(err) {
+					if(err) {
+					return console.log(err);
+					}
+
+					res.redirect('../../csv/'+filename);
+				}); 
+				
+			});
+		});
+	});
+
 	router.get('/rebuild', function(req, res, next) {
 		var clases = [];
 		var db = req.db;
@@ -315,11 +348,7 @@ module.exports = function(auth,options){
 					for(var i = 0; i < classrooms.length; i++)
 						codes = codes.concat(classrooms[i].codes)
 
-				console.log(codes);
-
 				codes = generateCodes(req.body.learners, 4, 'A',codes);
-
-				console.log(codes);
 
 				var classroom = new claseLib.Classroom(req.db, {
 					user: req.session.user._id,
@@ -336,6 +365,26 @@ module.exports = function(auth,options){
 					res.redirect('classes/view/' + classroom._id);
 				})
 			});
+		}
+	});
+
+	router.post('/collector', function(req, res, next){
+		var token = req.body.token;
+		var traces = req.files.traces;
+
+		var filename = token + ".csv";
+
+		if(!token || !traces){
+			console.log("falta");
+			res.json({message: "Error: Unknown token or traces", error: true});
+		}else{
+			fs.writeFile("public/traces/"+filename, new Buffer(traces.data, '7bit').toString(), function(err) {
+				if(err) {
+					res.json({message: "Error: " + err, error: true});
+				}else{
+					res.json({message: "success"});
+				}
+			}); 
 		}
 	});
 

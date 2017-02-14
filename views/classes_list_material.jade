@@ -26,7 +26,7 @@ block content
           button.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal.add_button
             i.material-icons add
       dialog(id="add_dialog").mdl-dialog.mdl-transition-in
-        form(name="altaclase", method="post", action="../classes", enctype="multipart/form-data")
+        form(name="altaclase", method="post", action="classes", enctype="multipart/form-data")
           .mdl-dialog__title
             | Add class
           .mdl-dialog__content
@@ -41,7 +41,7 @@ block content
             button.mdl-button(type='submit') Add
             button.mdl-button.close(type='button') Cancel
       dialog(id="import_dialog").mdl-dialog.mdl-transition-in.import_dialog
-        form(name="altaclase", method="post", action="../classes", enctype="multipart/form-data")
+        form(name="altaclase", method="post", action="classes", enctype="multipart/form-data")
           .mdl-dialog__title
             | Import
           .mdl-dialog__content

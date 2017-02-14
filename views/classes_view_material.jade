@@ -18,20 +18,30 @@ block content
                     each survey in surveys
                       th
                         !{survey.name} (!{survey.pre_r.length}/!{classroom.codes.length}) (!{survey.post_r.length}/!{classroom.codes.length})
+                        a(href="../export/#{classroom._id}?survey=#{survey.pre}",target="_blank")#demo-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
+                          i.material-icons file_download
+                        a(href="../export/#{classroom._id}?survey=#{survey.post}",target="_blank")#demo-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
+                          i.material-icons file_download
                     th
                       button#demo-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
                         i.material-icons delete
                       button#demo-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
                         i.material-icons add
+                      button#demo-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
+                        i.material-icons file_download
                 tbody
                   each code in classroom.codes
                     tr
                       td.mdl-data-table__cell--non-numeric !{code}
                       each survey in surveys
                         td
-                          !{survey.pre && survey.pre_r[code] ? (survey.pre_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'} / 
-                          !{survey.post && survey.post_r[code] ? (survey.post_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'}
+                          a.mdl-button(href="http://polls.e-ucm.es/index.php/#{survey.pre}?token=#{code}",target="_blank")
+                            !{survey.pre && survey.pre_r[code] ? (survey.pre_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'}
+                          a.mdl-button(href="http://polls.e-ucm.es/index.php/#{survey.post}?token=#{code}",target="_blank")
+                            !{survey.post && survey.post_r[code] ? (survey.post_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'}
                       td
+                        if traces[code]
+                          a(href="../../traces/"+code+".csv").mdl-button Traces
           .mdl-cell.mdl-cell--4-col.mdl-cell--8-col-tablet.mdl-grid.mdl-grid--no-spacing
             .mdl-card.mdl-shadow--2dp.mdl-cell.mdl-cell--4-col.mdl-cell--3-col-tablet.mdl-cell--12-col-desktop
               .mdl-card__title

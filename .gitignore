@@ -1,6 +1,5 @@
 /node_modules/
 /tmp/*
-/public/pdf/*
 
 # Config files
 config.js
