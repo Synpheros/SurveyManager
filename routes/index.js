@@ -8,15 +8,35 @@
 		prefix = 'http://';
 	
 	var options = {
-		url: prefix + app.config.limesurveyUrl + '/index.php/admin/remotecontrol',
-		method: "POST",
-		headers: {
-			'user-agent': 'Apache-HttpClient/4.2.2 (java 1.5)',
-	    	'host': app.config.limesurveyUrl,
-	    	'path': '/index.php/admin/remotecontrol',
-	    	'connection': 'keep-alive',
-	    	'content-type': 'application/json'
-	  	}
+		limesurvey:{
+			url: prefix + app.config.limesurveyUrl + '/index.php/admin/remotecontrol',
+			method: "POST",
+			headers: {
+				'user-agent': 'Apache-HttpClient/4.2.2 (java 1.5)',
+		    	'host': app.config.limesurveyUrl,
+		    	'path': '/index.php/admin/remotecontrol',
+		    	'connection': 'keep-alive',
+		    	'content-type': 'application/json'
+		  	}
+		},
+		backend:{
+			url: prefix + app.config.backendUrl + '/',
+			headers: {
+				'user-agent': 'Apache-HttpClient/4.2.2 (java 1.5)',
+		    	'host': app.config.backendUrl,
+		    	'connection': 'keep-alive',
+		    	'content-type': 'application/json'
+		  	}
+		},
+		a2:{
+			url: app.config.a2.a2ApiPath,
+			headers: {
+				'user-agent': 'Apache-HttpClient/4.2.2 (java 1.5)',
+		    	'host': app.config.a2.a2Url,
+		    	'connection': 'keep-alive',
+		    	'content-type': 'application/json'
+		  	}
+		}
 	};
 
     var auth = function(level){
@@ -42,7 +62,7 @@
 
     app.use('/', router);
 
-	app.use('/users', require('./user.js')(auth(1)));
+	app.use('/users', require('./user.js')(auth(1), options));
 	app.use('/classes', require('./clase.js')(auth, options));
 	app.use('/surveys', require('./survey.js')(auth, options));
 
