@@ -12,12 +12,28 @@ module.exports = function(auth, options){
 
 	var claseLib = require('../lib/clase');
 	var surveyLib = require('../lib/survey');
+
+	//Initialize Limesurvey Controller
 	var lsController = require('../lib/limesurvey/controller');
 
-	lsController.setOptions(options);
+	lsController.setOptions(options['limesurvey']);
 	lsController.setUser(user,pass);
 
+	//Initialize A2 Controller
+	var a2Controller = require('../lib/a2/controller');
+
+	a2Controller.setOptions(options['a2']);
+	a2Controller.setUser("root","root");
+
+	//Initialize Backend Controller
+	var backController = require('../lib/backend/controller');
+
+	backController.setOptions(options['backend']);
+
+	//set the controllers to the libraries
 	surveyLib.setController(lsController);
+	claseLib.setController(backController);
+	claseLib.setA2(a2Controller);
 
 	router.get('/', auth(1), function(req, res, next){
 		var surveys = [], classrooms = [];
