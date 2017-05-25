@@ -28,6 +28,6 @@
   },
   "devDependencies": {
     "handlebars": "*",
-    "promptly": "*"
+    "promptly": "2.1.x"
   }
 }

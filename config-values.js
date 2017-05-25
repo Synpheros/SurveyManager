@@ -107,7 +107,10 @@ exports.defaultValues = {
     myHost: process.env.MY_HOST || 'localhost',
     limesurveyHost: 'localhost',
     limesurveyPort: '80',
-    limesurveyUrl: 'http://localhost:80/'
+    limesurveyUrl: 'http://localhost:80/',
+    backendHost: 'localhost',
+    backendPort: '3300',
+    backendUrl: 'http://localhost:3300/'
 };
 
 exports.testValues = {
@@ -131,7 +134,10 @@ exports.testValues = {
     myHost: process.env.MY_HOST || 'localhost',
     limesurveyHost: 'localhost',
     limesurveyPort: '80',
-    limesurveyUrl: 'http://localhost:80/'
+    limesurveyUrl: 'http://localhost:80/',
+    backendHost: 'localhost',
+    backendPort: '3300',
+    backendUrl: 'http://localhost:3300/'
 };
 
 var prefix = 'RAGE_ANALYTICS_SURVEYMANAGER_';
@@ -157,3 +163,6 @@ exports.testValues.a2AdminPassword = exports.defaultValues.a2AdminPassword;
 
 exports.defaultValues.limesurveyUrl = exports.defaultValues.limesurveyHost + ':' + exports.defaultValues.limesurveyPort;
 exports.testValues.limesurveyUrl = exports.defaultValues.limesurveyUrl;
+
+exports.defaultValues.backendUrl = exports.defaultValues.backendHost + ':' + exports.defaultValues.backendPort;
+exports.testValues.backendUrl = exports.defaultValues.backendUrl;
