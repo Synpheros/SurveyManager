@@ -141,7 +141,7 @@ exports.testValues = {
 };
 
 var prefix = 'RAGE_ANALYTICS_SURVEYMANAGER_';
-var links = ['a2','limesurvey','mongo'];
+var links = ['a2','limesurvey','mongo', 'back'];
 initFromEnv(exports.defaultValues, prefix, links);
 initFromEnv(exports.testValues, prefix, links);
 
