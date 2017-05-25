@@ -61,7 +61,6 @@ module.exports = function(auth,options){
 				surveyLib.listSurveys(db, {}, surveys),
 			], function (err, result) {
 				if(err){
-					console.log(err);
 					callback(err, result);
 				}
 				else{
@@ -102,8 +101,6 @@ module.exports = function(auth,options){
 						if(exist)
 							traces[classroom.codes[i]] = true;
 					}
-
-					console.log(traces);
 
 					for(var i = 0; i < realsurveys.length; i++){
 						console.log(i);
@@ -194,17 +191,11 @@ module.exports = function(auth,options){
 			 
 			docx.createTable (table, tableStyle);
 
-			console.log("created_table");
-
 			var out = fs.createWriteStream ( 'tmp/'+classroom._id.toString()+'.docx' );
-
-			console.log("writestream");
 
 			out.on ( 'error', function ( err ) {
 				console.log ( err );
 			});
-
-			console.log("2");
 
 			async.parallel ([
 				function ( done ) {
@@ -219,8 +210,6 @@ module.exports = function(auth,options){
 				if ( err ) {
 					console.log ( 'error: ' + err );
 				} 
-
-				console.log("3");
 
 			res.render('classes_view', {classroom: result});
 			});
@@ -373,8 +362,6 @@ module.exports = function(auth,options){
 					codes: codes
 				});
 
-				console.log(classroom);
-
 				classroom.save(function(err, result){
 					if(err)
 						return next(new Error(err));
@@ -414,8 +401,6 @@ module.exports = function(auth,options){
 			}
 			codes.push(code);
 			ret.push(code);
-
-			console.log(code);
 		};
 		return ret;
 	}
