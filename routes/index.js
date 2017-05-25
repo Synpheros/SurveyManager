@@ -20,10 +20,9 @@
 		  	}
 		},
 		backend:{
-			url: prefix + app.config.backendUrl + '/',
+			url: app.config.backendUrl,
 			headers: {
 				'user-agent': 'Apache-HttpClient/4.2.2 (java 1.5)',
-		    	'host': app.config.backendUrl,
 		    	'connection': 'keep-alive',
 		    	'content-type': 'application/json'
 		  	}

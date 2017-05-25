@@ -65,6 +65,27 @@ block content
                     span.mdl-ripple.is-animating
             .mdl-cell--1-col
               br
+            .mdl-card.mdl-shadow--2dp.mdl-cell.mdl-cell--4-col.mdl-cell--3-col-tablet.mdl-cell--12-col-desktop
+              .mdl-card__title
+                h2.mdl-card__title-text Games
+              .mdl-card__supporting-text
+                | Games assigned to this class.
+              .mdl-card__supporting-text
+                ul.demo-list-control.mdl-list
+                  if classroom.games
+                    each game in games
+                      if classroom.games.indexOf(game) > -1
+                        li.mdl-list__item
+                          span.mdl-list__item-primary-content
+                            i.material-icons.mdl-list__item-avatar games
+                            | !{game.title}
+              .mdl-card__actions.mdl-card--border
+                a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect(data-upgraded=',MaterialButton,MaterialRipple').show-games
+                  | Add Game
+                  span.mdl-button__ripple-container
+                    span.mdl-ripple.is-animating
+            .mdl-cell--1-col
+              br
     ul.fab-menu
       li
         a(href="../pdf/#{classroom._id}",target="_blank").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal
@@ -72,3 +93,26 @@ block content
       li
         a(href="../word/#{classroom._id}",target="_blank").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal
           img(src="../../icon/word.png",width="55px")
+    dialog.mdl-dialog.mdl-transition-in.games-dialog
+      .mdl-dialog__title
+        | Add Game
+      .mdl-dialog__content
+        each game in games
+          form(name="selectgame", method="post", action="../addgame", enctype="multipart/form-data")
+            input(type="hidden",name="game",value="#{game._id}")
+            input(type="hidden",name="classroom",value="#{classroom._id}")
+            button.mdl-button(type='submit') !{game.title}
+      .mdl-dialog__actions.mdl-dialog__actions
+        button.mdl-button.close(type='button') Cancel
+    script.
+      var dialog = document.querySelector('.games-dialog');
+      var showModalButton = document.querySelector('.show-games');
+      if (! dialog.showModal) {
+      dialogPolyfill.registerDialog(dialog);
+      }
+      showModalButton.addEventListener('click', function() {
+      dialog.showModal();
+      });
+      dialog.querySelector('.close').addEventListener('click', function() {
+      dialog.close();
+      });
