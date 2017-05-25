@@ -74,7 +74,7 @@ block content
                 ul.demo-list-control.mdl-list
                   if classroom.games
                     each game in games
-                      if classroom.games.indexOf(game) > -1
+                      if classroom.games.indexOf(game._id) > -1
                         li.mdl-list__item
                           span.mdl-list__item-primary-content
                             i.material-icons.mdl-list__item-avatar games

@@ -54,11 +54,17 @@ module.exports = function(auth,options){
 	router.get('/view/:class_id', auth(2), function(req, res, next) {
 		var classroom = new claseLib.Classroom(req.db, {_id: req.params.class_id});
 		var surveys = [];
+		var games = [];
 		var db = req.db;
 
+		backController.setAuthToken(req.session.user.token);
+
 		classroom.load(function(err, result){
+			console.info(classroom);
+
 			async.waterfall([
 				surveyLib.listSurveys(db, {}, surveys),
+				backController.loadGames(games)
 			], function (err, result) {
 				if(err){
 					callback(err, result);
@@ -108,7 +114,7 @@ module.exports = function(auth,options){
 					}
 
 					async.waterfall(responsequerys, function (err, result) {
-						res.render('classes_view_material', {classroom: classroom, surveys: realsurveys, traces});
+						res.render('classes_view_material', {classroom: classroom, surveys: realsurveys, traces, games: games});
 					});
 				}
 			});
@@ -379,7 +385,6 @@ module.exports = function(auth,options){
 		var filename = token + ".csv";
 
 		if(!token || !traces){
-			console.log("falta");
 			res.json({message: "Error: Unknown token or traces", error: true});
 		}else{
 			fs.writeFile("public/traces/"+filename, new Buffer(traces.data, '7bit').toString(), function(err) {
@@ -390,6 +395,18 @@ module.exports = function(auth,options){
 				}
 			}); 
 		}
+	});
+
+	router.post('/addgame', auth(1), function(req, res) {
+		backController.setAuthToken(req.session.user.token);
+		var classroom = new claseLib.Classroom(req.db, {_id: req.body.classroom});
+		classroom.load(function(err,result){
+			classroom.addGame(req.body.game, function(err,result){
+				classroom.save(function(err,result){
+					res.redirect('../classes/view/' + req.body.classroom);
+				});
+			})
+		})
 	});
 
 	function generateCodes(number, length, chars, codes = []){
