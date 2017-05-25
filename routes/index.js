@@ -34,7 +34,9 @@
 		    	'host': app.config.a2.a2Url,
 		    	'connection': 'keep-alive',
 		    	'content-type': 'application/json'
-		  	}
+		  	},
+		  	username: app.config.a2.a2AdminUsername,
+		  	password: app.config.a2.a2AdminPassword
 		}
 	};
 
