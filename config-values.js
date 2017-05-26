@@ -164,5 +164,5 @@ exports.testValues.a2AdminPassword = exports.defaultValues.a2AdminPassword;
 exports.defaultValues.limesurveyUrl = exports.defaultValues.limesurveyHost + ':' + exports.defaultValues.limesurveyPort;
 exports.testValues.limesurveyUrl = exports.defaultValues.limesurveyUrl;
 
-exports.defaultValues.backendUrl = exports.defaultValues.backendHost + ':' + exports.defaultValues.backendPort;
+exports.defaultValues.backendUrl = exports.defaultValues.backendHost + ':' + exports.defaultValues.backendPort + '/api';
 exports.testValues.backendUrl = exports.defaultValues.backendUrl;
