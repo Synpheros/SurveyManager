@@ -108,9 +108,7 @@ exports.defaultValues = {
     limesurveyHost: 'localhost',
     limesurveyPort: '80',
     limesurveyUrl: 'http://localhost:80/',
-    backendHost: 'localhost',
-    backendPort: '3300',
-    backendUrl: 'http://localhost:3300/'
+    backendName: process.env.BACKEND_NAME
 };
 
 exports.testValues = {
@@ -135,13 +133,11 @@ exports.testValues = {
     limesurveyHost: 'localhost',
     limesurveyPort: '80',
     limesurveyUrl: 'http://localhost:80/',
-    backendHost: 'localhost',
-    backendPort: '3300',
-    backendUrl: 'http://localhost:3300/'
+    backendName: process.env.BACKEND_NAME
 };
 
 var prefix = 'RAGE_ANALYTICS_SURVEYMANAGER_';
-var links = ['a2','limesurvey','mongo', 'backend'];
+var links = ['a2','limesurvey','mongo'];
 initFromEnv(exports.defaultValues, prefix, links);
 initFromEnv(exports.testValues, prefix, links);
 
@@ -164,5 +160,5 @@ exports.testValues.a2AdminPassword = exports.defaultValues.a2AdminPassword;
 exports.defaultValues.limesurveyUrl = exports.defaultValues.limesurveyHost + ':' + exports.defaultValues.limesurveyPort;
 exports.testValues.limesurveyUrl = exports.defaultValues.limesurveyUrl;
 
-exports.defaultValues.backendUrl = exports.defaultValues.backendHost + ':' + exports.defaultValues.backendPort + '/api';
+exports.defaultValues.backendUrl = app.config.a2.a2ApiPath + '/proxy/' + exports.defaultValues.backendName;
 exports.testValues.backendUrl = exports.defaultValues.backendUrl;
