@@ -13,6 +13,7 @@ block content
                   .mdl-card__supporting-text
                     | Pre: !{survey.pre}
                     | Post: !{survey.post}
+                    | Teacher: !{survey.teacher}
                   .mdl-card__actions.mdl-card--border
                     a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect(href="surveys/view/#{survey._id}")
                       | View survey
@@ -37,6 +38,9 @@ block content
             .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
               input(type='file', name="post", placeholder='Survey shown post-game')
               label.mdl-textfield__label(for='post') Survey shown post-game
+            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input(type='file', name="teacher", placeholder='Survey shown teacher-game')
+              label.mdl-textfield__label(for='teacher') Survey shown teacher-game
           .mdl-dialog__actions.mdl-dialog__actions
             button.mdl-button(type='submit') Add
             button.mdl-button.close(type='button') Cancel

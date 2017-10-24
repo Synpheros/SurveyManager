@@ -115,8 +115,21 @@ module.exports = function(auth, options){
 
 		console.log(req.files);
 
-		if(req.files.pre.name != '')
-			survey.setPre(req.files.pre,function(err,result){
+		var surveys_to_add = [];
+
+		if(req.files.pre.name != ''){
+			surveys_to_add.push(function(callback){ return survey.setPre(req.files.pre,function(err,result){ callback(); }); });
+		}
+
+		if(req.files.post.name != ''){
+			surveys_to_add.push(function(callback){ return survey.setPost(req.files.post,function(err,result){ callback(); }); });
+		}
+
+		if(req.files.teacher.name != ''){
+			surveys_to_add.push(function(callback){ return survey.setTeacher(req.files.teacher,function(err,result){ callback(); }); });
+		}
+
+		/*	survey.setPre(req.files.pre,function(err,result){
 				if(req.files.post.name != '')
 					survey.setPost(req.files.post,function(err,result){
 						saveAndRender(survey);
@@ -124,7 +137,13 @@ module.exports = function(auth, options){
 				else saveAndRender(survey);
 			});
 		else if(req.files.post.name != '')
-			survey.setPost(req.files.post,function(err,result){ saveAndRender(survey); });
+			survey.setPost(req.files.post,function(err,result){ saveAndRender(survey); });*/
+
+
+		async.waterfall(surveys_to_add, function (err, result) {
+			saveAndRender(survey)
+		});
+
 	});
 
 	router.post('/addclass', auth(1), function(req, res) {
