@@ -22,6 +22,8 @@ block content
                           i.material-icons file_download
                         a(href="../export/#{classroom._id}?survey=#{survey.post}",target="_blank")#demo-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
                           i.material-icons file_download
+                        a(href="../export/#{classroom._id}?survey=#{survey.teacher}",target="_blank")#demo-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
+                          i.material-icons file_download
                     th
                       button#demo-menu-lower-left.mdl-button.mdl-js-button.mdl-button--icon
                         i.material-icons delete
@@ -39,6 +41,8 @@ block content
                             !{survey.pre && survey.pre_r[code] ? (survey.pre_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'}
                           a.mdl-button(href="http://polls.e-ucm.es/index.php/#{survey.post}?token=#{code}",target="_blank")
                             !{survey.post && survey.post_r[code] ? (survey.post_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'}
+                          a.mdl-button(href="http://polls.e-ucm.es/index.php/#{survey.teacher}?token=#{code}",target="_blank")
+                            !{survey.teacher && survey.teacher_r[code] ? (survey.teacher_r[code].submitdate? 'Finished' : 'Started') : 'Not Found'}
                       td
                         if traces[code]
                           a(href="../../traces/"+code+".csv").mdl-button Traces

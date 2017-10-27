@@ -87,16 +87,19 @@ module.exports = function(auth,options){
 					var getAndAdd = function(survey){
 						return function(callback){
 							var waterfall = [];
-							var pre_r = [],post_r = [];
+							var pre_r = [], post_r = [], teacher_r = [];
 
 							if(survey.pre)
 								waterfall.push(surveyLib.getResponses(survey.pre,pre_r))
 							if(survey.post)
 								waterfall.push(surveyLib.getResponses(survey.post,post_r))
+							if(survey.teacher)
+								waterfall.push(surveyLib.getResponses(survey.teacher,teacher_r))
 
 							async.waterfall(waterfall, function(err, result){
 								survey.pre_r = pre_r;
 								survey.post_r = post_r;
+								survey.teacher_r = teacher_r;
 								callback(null);
 							});
 						}
