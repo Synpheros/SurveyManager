@@ -22,8 +22,8 @@ module.exports = function(auth, options){
 	//Initialize A2 Controller
 	var a2Controller = require('../lib/a2/controller');
 
-	a2Controller.setOptions(options['a2']);
-	a2Controller.setUser("root","root");
+	a2Controller.setOptions(options['a2']["config"]);
+	a2Controller.setUser(options['a2']["username"],options['a2']["password"]);
 
 	//Initialize Backend Controller
 	var backController = require('../lib/backend/controller');

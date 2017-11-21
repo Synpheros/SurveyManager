@@ -28,13 +28,15 @@
 		  	}
 		},
 		a2:{
-			url: app.config.a2.a2ApiPath,
-			headers: {
-				'user-agent': 'Apache-HttpClient/4.2.2 (java 1.5)',
-		    	'host': app.config.a2.a2Url,
-		    	'connection': 'keep-alive',
-		    	'content-type': 'application/json'
-		  	},
+			config: {
+				url: app.config.a2.a2ApiPath,
+				headers: {
+					'user-agent': 'Apache-HttpClient/4.2.2 (java 1.5)',
+			    	'host': app.config.a2.a2Url,
+			    	'connection': 'keep-alive',
+			    	'content-type': 'application/json'
+			  	}
+			},
 		  	username: app.config.a2.a2AdminUsername,
 		  	password: app.config.a2.a2AdminPassword
 		}

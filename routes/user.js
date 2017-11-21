@@ -4,7 +4,7 @@ module.exports = function(auth, options){
 
 	var request = require('request');
 
-	var options = options['a2'];
+	var options = options['a2']["config"];
 
 	var express = require('express'),
     router = express.Router();
