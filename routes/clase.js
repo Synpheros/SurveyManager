@@ -28,7 +28,6 @@ module.exports = function(auth,options){
 
 	//Initialize Backend Controller
 	var backController = require('../lib/backend/controller');
-
 	backController.setOptions(options['backend']);
 
 	//set the controllers to the libraries
@@ -63,23 +62,13 @@ module.exports = function(auth,options){
 			console.info(classroom);
 
 			async.waterfall([
-				surveyLib.listSurveys(db, {}, surveys),
+				surveyLib.listSurveys(db, {"classrooms" : {$elemMatch: {"_id": classroom._id}}}, surveys),
 				backController.loadGames(games)
 			], function (err, result) {
 				if(err){
 					callback(err, result);
 				}
 				else{
-					var realsurveys = [];
-					for(var s = 0; s < surveys.length; s++)
-						for(var i = 0; i < surveys[s].classrooms.length; i++){
-							var c = surveys[s].classrooms[i];
-							if(c._id.toString() == classroom._id.toString()){
-								realsurveys.push(surveys[s]);
-								break;
-							}
-						}
-
 					var responsequerys = [];
 
 					var getAndAdd = function(survey){
@@ -111,13 +100,13 @@ module.exports = function(auth,options){
 							traces[classroom.codes[i]] = true;
 					}
 
-					for(var i = 0; i < realsurveys.length; i++){
+					for(var i = 0; i < surveys.length; i++){
 						console.log(i);
-						responsequerys.push(getAndAdd(realsurveys[i]));
+						responsequerys.push(getAndAdd(surveys[i]));
 					}
 
 					async.waterfall(responsequerys, function (err, result) {
-						res.render('classes_view_material', {classroom: classroom, surveys: realsurveys, traces, games: games});
+						res.render('classes_view_material', {classroom: classroom, surveys: surveys, traces, games: games});
 					});
 				}
 			});
@@ -133,11 +122,41 @@ module.exports = function(auth,options){
 			if(err)
 				return next(new Error(err));
 
-			classroom.delete(function(err,result){
-				if(err)
+			async.waterfall([
+				surveyLib.listSurveys(db, {"classrooms" : {$elemMatch: {"_id": classroom._id}}}, surveys)
+			], function (err, result) {
+				if(err){
 					return next(new Error(err));
+				}
 
-				res.redirect('../../classes');
+				var delclass = function(result, error){
+					if(error)
+						return next(new Error(error));
+
+					classroom.delete(function(e,result){
+						if(e)
+							return next(new Error(e));
+
+						res.redirect('../../classes');
+					});
+				}
+				var delclasfromsurvey = function(survey){
+					return function(callback){
+						var survey = new surveyLib.Survey(req.db, s);
+						survey.delClassroom(classroom, function(err,result){
+							survey.save(function(err,result){
+								callback();
+							});
+						});
+					}
+				}
+
+				var todo = [];
+				for(var s of surveys){
+					todo.push(delclasfromsurvey(s));
+				}
+
+				async.waterfall(todo, delclass);
 			});
 		});
 	});
@@ -305,6 +324,7 @@ module.exports = function(auth,options){
 	});
 
 	router.post('/', auth(1), function(req, res, next){
+		backController.setAuthToken(req.session.user.token);
 		var db = req.db;
 		var classrooms = [];
 
