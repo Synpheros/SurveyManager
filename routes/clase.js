@@ -251,11 +251,11 @@ module.exports = function(auth,options){
 			var pdf = require('html-pdf');
 
 			var html = '<!DOCTYPE html><html><head><title></title><style type="text/css">body{padding:10px} table{font-size: 18px;font-family: "DejaVu Sans Mono"; border: solid 2px black;border-collapse: collapse;}table td{border: solid 2px black;text-align: center;}</style></head>';
-			html += '<body><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
 
 			for(var i = 0; i < classroom.codes.length; i++){
-				if(i==30)
+				if((i%30)==0){
 					html += '</table></body><body><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr><br><br>';
+				}
 				html += '<tr><td>'+ (i+1) + '</td><td></td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td></tr>';
 			}
 
@@ -435,10 +435,11 @@ module.exports = function(auth,options){
 	function generateCodes(number, length, chars, codes = []){
 		var ret = [];
 		for (var i=0; i < number; i++) {
-			var code = randomString(4, 'A');
-			while (repeated(code, codes) > -1) {
-				var code = randomString(4, 'A');
-			}
+			var code;
+			do{
+				code = randomString(4, 'A');
+			}while (repeated(code, codes) > -1);
+
 			codes.push(code);
 			ret.push(code);
 		};
