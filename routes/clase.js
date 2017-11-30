@@ -251,12 +251,12 @@ module.exports = function(auth,options){
 			var pdf = require('html-pdf');
 
 			var html = '<!DOCTYPE html><html><head><title></title><style type="text/css">body{padding:10px} table{font-size: 18px;font-family: "DejaVu Sans Mono"; border: solid 2px black;border-collapse: collapse;}table td{border: solid 2px black;text-align: center;}</style></head>';
+			html += '<body><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
+			html += '<tr><td>'+ (1) + '</td><td></td><td>'+classroom.codes[1]+'</td><td>'+classroom.codes[1]+'</td><td>'+classroom.codes[1]+'</td><td>'+classroom.codes[1]+'</td></tr>';
 
-			for(var i = 0; i < classroom.codes.length; i++){
+			for(var i = 1; i < classroom.codes.length; i++){
 				if((i%30)==0){
 					html += '</table></body><body><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
-					if(i!=0)
-						html+= '<br><br>';
 				}
 				html += '<tr><td>'+ (i+1) + '</td><td></td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td></tr>';
 			}
