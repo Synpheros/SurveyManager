@@ -256,7 +256,7 @@ module.exports = function(auth,options){
 
 			for(var i = 1; i < classroom.codes.length; i++){
 				if((i%30)==0){
-					html += '</table></body><body><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
+					html += '</table><br><br><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
 				}
 				html += '<tr><td>'+ (i+1) + '</td><td></td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td></tr>';
 			}
