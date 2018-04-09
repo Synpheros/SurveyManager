@@ -250,15 +250,32 @@ module.exports = function(auth,options){
 		classroom.load(function(err, result){
 			var pdf = require('html-pdf');
 
+			var colspan = 6 + Object.keys(classroom.metadata).length;
 			var html = '<!DOCTYPE html><html><head><title></title><style type="text/css">body{padding:10px} table{font-size: 18px;font-family: "DejaVu Sans Mono"; border: solid 2px black;border-collapse: collapse;}table td{border: solid 2px black;text-align: center;}</style></head>';
-			html += '<body><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
-			html += '<tr><td>'+ (1) + '</td><td></td><td>'+classroom.codes[0]+'</td><td>'+classroom.codes[0]+'</td><td>'+classroom.codes[0]+'</td><td>'+classroom.codes[0]+'</td></tr>';
+			html += '<body><table width="100%" style=""><tr><th colspan="' + colspan + '" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td>';
+
+			for (var key in classroom.metadata) {
+				html += '<td>' + key + '</td>';
+			}
+
+			html += '<td width="40%" colspan="4">Código</td></tr>';
+			html += '<tr><td>'+ (1) + '</td><td></td>';
+
+			for (var key in classroom.metadata) {
+				html += '<td>' + classroom.metadata[key].values[classroom.codes[0]] + '</td>';
+			}
+
+			html += '<td>'+classroom.codes[0]+'</td><td>'+classroom.codes[0]+'</td><td>'+classroom.codes[0]+'</td><td>'+classroom.codes[0]+'</td></tr>';
 
 			for(var i = 1; i < classroom.codes.length; i++){
 				if((i%30)==0){
 					html += '</table><br><br><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
 				}
-				html += '<tr><td>'+ (i+1) + '</td><td></td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td></tr>';
+				html += '<tr><td>'+ (i+1) + '</td><td></td>';
+				for (var key in classroom.metadata) {
+					html += '<td>' + classroom.metadata[key].values[classroom.codes[i]] + '</td>';
+				}
+				html += '<td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td></tr>';
 			}
 
 			html += '</table></body></html>';
@@ -430,6 +447,63 @@ module.exports = function(auth,options){
 				classroom.save(function(err,result){
 					res.redirect('../classes/view/' + req.body.classroom);
 				});
+			})
+		})
+	});
+
+	router.post('/:classid/metadata', auth(1), function(req, res) {
+
+		var classroom = new claseLib.Classroom(req.db, {_id: req.params.classid});
+
+		try {
+			var metadata = JSON.parse(req.body.definition);
+		}catch(error){
+			res.redirect('../../classes/view/' + req.params.classid);
+		}
+
+		classroom.load(function(err,result){
+			classroom.addMetaData(metadata, function(err,result){
+				if(err){
+					console.info(err);
+					console.info(classroom);
+				}
+
+				res.redirect('../../classes/view/' + req.params.classid);
+			})
+		})
+	});
+
+	router.get('/:classid/metadata/:metadataid/:code', function(req, res) {
+
+		var classroom = new claseLib.Classroom(req.db, {_id: req.params.classid});
+
+		classroom.load(function(err,result){
+			if(err){
+				res.status(400);
+				res.json({ message: "Error obtainig the value", error: err });
+			}
+
+			try{
+				res.json({ value: classroom.getMetaData(req.params.metadataid, req.params.code) });
+			}catch(error){
+				res.status(400);
+				res.json({ message: "Incorrect metadataId", error: error });
+			}
+		})
+	});
+
+	router.post('/:classid/metadata/:metadataid/:code', auth(1), function(req, res) {
+		console.log("hello");
+		var classroom = new claseLib.Classroom(req.db, {_id: req.params.classid});
+
+		classroom.load(function(err,result){
+			classroom.setMetaData(req.params.metadataid, req.params.code, req.body.value, function(err,result){
+				if(err){
+					res.status(400);
+					res.json({ message: "Error adding value", error: err });
+				}
+
+				res.json({ success: true });
 			})
 		})
 	});
