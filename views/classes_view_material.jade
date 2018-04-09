@@ -15,6 +15,9 @@ block content
                 thead
                   tr
                     th.mdl-data-table__cell--non-numeric Code
+                    each metadata in classroom.metadata
+                      th
+                        !{metadata.description.id}
                     each survey in surveys
                       th
                         !{survey.name} (!{survey.pre_r.length}/!{classroom.codes.length}) (!{survey.post_r.length}/!{classroom.codes.length})
@@ -35,6 +38,15 @@ block content
                   each code in classroom.codes
                     tr
                       td.mdl-data-table__cell--non-numeric !{code}
+                      each metadata in classroom.metadata
+                        td
+                          button.mdl-button(id="#{metadata.description.id}_#{code}") 
+                            span(id="#{metadata.description.id}_#{code}_placeholder") !{metadata.values[code]}
+                            i.material-icons keyboard_arrow_down
+                          ul.mdl-menu.mdl-menu--bottom-left.mdl-js-menu.mdl-js-ripple-effect(for='#{metadata.description.id}_#{code}')
+                            each option in metadata.description.options
+                              li.mdl-menu__item(data-val='#{option}', onclick="setMetaData('#{metadata.description.id}', '#{code}', '#{option}')") !{option}
+
                       each survey in surveys
                         td
                           a.mdl-button(href="http://polls.e-ucm.es/index.php/#{survey.pre}?token=#{code}",target="_blank")
@@ -88,6 +100,10 @@ block content
                   | Add Game
                   span.mdl-button__ripple-container
                     span.mdl-ripple.is-animating
+                a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect(data-upgraded=',MaterialButton,MaterialRipple').show-metadata
+                  | Add Metadata
+                  span.mdl-button__ripple-container
+                    span.mdl-ripple.is-animating
             .mdl-cell--1-col
               br
     ul.fab-menu
@@ -97,6 +113,15 @@ block content
       li
         a(href="../word/#{classroom._id}",target="_blank").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.show-modal
           img(src="../../icon/word.png",width="55px")
+    dialog.mdl-dialog.mdl-transition-in.metadata-dialog
+      .mdl-dialog__title
+        | Add Metadata
+      .mdl-dialog__content
+          form(name="selectmetadata", method="post", action="../#{classroom._id}/metadata", enctype="multipart/form-data")
+            input(type="hidden",name="definition",value='{ "id": "AB", "options": ["A", "B", "Random", "Default"], "default": "A" }')
+            button.mdl-button(type='submit') A/B Case
+      .mdl-dialog__actions.mdl-dialog__actions
+        button.mdl-button.close(type='button') Cancel
     dialog.mdl-dialog.mdl-transition-in.games-dialog
       .mdl-dialog__title
         | Add Game
@@ -108,15 +133,58 @@ block content
             button.mdl-button(type='submit') !{game.title}
       .mdl-dialog__actions.mdl-dialog__actions
         button.mdl-button.close(type='button') Cancel
+    #notification.mdl-js-snackbar.mdl-snackbar
+      .mdl-snackbar__text
+      button.mdl-snackbar__action(type='button')
     script.
+      var notification = document.querySelector('#notification');
+      var showToastButton = document.querySelector('#demo-show-toast');
+
+      var notificate = function(text) {
+        'use strict';
+        var data = {message: text};
+        notification.MaterialSnackbar.showSnackbar(data);
+      };
+
       var dialog = document.querySelector('.games-dialog');
+      var metadata = document.querySelector('.metadata-dialog');
       var showModalButton = document.querySelector('.show-games');
+      var metadataButton = document.querySelector('.show-metadata');
+
       if (! dialog.showModal) {
-      dialogPolyfill.registerDialog(dialog);
+        dialogPolyfill.registerDialog(dialog);
       }
       showModalButton.addEventListener('click', function() {
-      dialog.showModal();
+        dialog.showModal();
       });
       dialog.querySelector('.close').addEventListener('click', function() {
-      dialog.close();
+        dialog.close();
       });
+
+      if (! metadata.showModal) {
+        dialogPolyfill.registerDialog(metadata);
+      }
+      metadataButton.addEventListener('click', function() {
+        metadata.showModal();
+      });
+      metadata.querySelector('.close').addEventListener('click', function() {
+        metadata.close();
+      });
+
+      var setMetaData = function(id, code, value) {
+        $.ajax({
+          url: '../metadata/' + id + '/' + code,
+          dataType: 'json',
+          headers: {'Content-Type': 'application/json'},
+          data: JSON.stringify({value: value}),
+          method: 'post',
+          success: function(result){
+            $('#'+id+'_'+code+'_placeholder').text(value);
+            notificate("Value changed")
+          },
+          error: function(error){
+            notificate(JSON.stringify(error));
+          }
+        });
+      };
+
