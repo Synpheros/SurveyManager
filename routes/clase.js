@@ -473,39 +473,56 @@ module.exports = function(auth,options){
 		})
 	});
 
-	router.get('/:classid/metadata/:metadataid/:code', function(req, res) {
+	router.get('/metadata/:metadataid/:code', function(req, res) {
 
-		var classroom = new claseLib.Classroom(req.db, {_id: req.params.classid});
+		var classrooms = [];
+		async.waterfall([
+			claseLib.listClassrooms(req.db, {codes: req.params.code}, classrooms)
+		], function (err, result) {
+			var classroom = new claseLib.Classroom(req.db, classrooms[0]);
 
-		classroom.load(function(err,result){
-			if(err){
-				res.status(400);
-				res.json({ message: "Error obtainig the value", error: err });
-			}
-
-			try{
-				res.json({ value: classroom.getMetaData(req.params.metadataid, req.params.code) });
-			}catch(error){
-				res.status(400);
-				res.json({ message: "Incorrect metadataId", error: error });
-			}
-		})
-	});
-
-	router.post('/:classid/metadata/:metadataid/:code', auth(1), function(req, res) {
-		console.log("hello");
-		var classroom = new claseLib.Classroom(req.db, {_id: req.params.classid});
-
-		classroom.load(function(err,result){
-			classroom.setMetaData(req.params.metadataid, req.params.code, req.body.value, function(err,result){
+			classroom.load(function(err,result){
 				if(err){
 					res.status(400);
-					res.json({ message: "Error adding value", error: err });
+					return res.json({ message: "Error obtainig the value", error: err });
 				}
 
-				res.json({ success: true });
+				try{
+					res.json({ value: classroom.getMetaData(req.params.metadataid, req.params.code) });
+				}catch(error){
+					res.status(400);
+					res.json({ message: "Incorrect metadataId", error: error });
+				}
 			})
-		})
+		});
+	});
+
+	router.post('/metadata/:metadataid/:code', auth(1), function(req, res) {
+
+		var classrooms = [];
+		async.waterfall([
+			claseLib.listClassrooms(req.db, {codes: req.params.code}, classrooms)
+		], function (err, result) {
+			var classroom = new claseLib.Classroom(req.db, classrooms[0]);
+
+			console.info(classroom);
+
+			classroom.load(function(err,result){
+				if(err){
+					res.status(400);
+					return res.json({ message: "Error loading class", error: err });
+				}
+
+				classroom.setMetaData(req.params.metadataid, req.params.code, req.body.value, function(err,result){
+					if(err){
+						res.status(400);
+						return res.json({ message: "Error adding value", error: err });
+					}
+
+					res.json({ success: true });
+				})
+			})
+		});
 	});
 
 	function generateCodes(number, length, chars, codes = []){
