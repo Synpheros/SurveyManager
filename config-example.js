@@ -34,4 +34,5 @@ exports.mongodb = {
     uri: process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || '{{mongodbUrl}}'
 };
 exports.limesurveyUrl = '{{limesurveyUrl}}';
+exports.externalLimesurveyUrl = '{{externalLimesurveyUrl}}';
 exports.backendUrl = '{{backendUrl}}';

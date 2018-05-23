@@ -266,9 +266,19 @@ module.exports = function(auth, options){
 	});
 
 	router.get('/survey/:survey', function(req, res, next) {
+		if(!req.query.token){
+			res.status(400);
+			return res.json({error: "Request must include a Token"});
+		}
 		var token = req.query.token;
+		
+		if(!req.params.survey){
+			res.status(400);
+			return res.json({error: "Request must include a survey"});
+		}
 		var survey = req.params.survey;
-		var url = 'http://polls.e-ucm.es/index.php/' + survey + '?token=' + token;
+
+		var url = req.app.config.externalLimesurveyUrl + survey + '?token=' + token;
 		res.writeHead(301,{Location: url});
 		res.end();
 	});
