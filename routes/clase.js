@@ -250,13 +250,32 @@ module.exports = function(auth,options){
 		classroom.load(function(err, result){
 			var pdf = require('html-pdf');
 
+			var colspan = 6 + Object.keys(classroom.metadata).length;
 			var html = '<!DOCTYPE html><html><head><title></title><style type="text/css">body{padding:10px} table{font-size: 18px;font-family: "DejaVu Sans Mono"; border: solid 2px black;border-collapse: collapse;}table td{border: solid 2px black;text-align: center;}</style></head>';
-			html += '<body><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
+			html += '<body><table width="100%" style=""><tr><th colspan="' + colspan + '" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td>';
 
-			for(var i = 0; i < classroom.codes.length; i++){
-				if(i==30)
-					html += '</table></body><body><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr><br><br>';
-				html += '<tr><td>'+ (i+1) + '</td><td></td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td></tr>';
+			for (var key in classroom.metadata) {
+				html += '<td>' + key + '</td>';
+			}
+
+			html += '<td width="40%" colspan="4">Código</td></tr>';
+			html += '<tr><td>'+ (1) + '</td><td></td>';
+
+			for (var key in classroom.metadata) {
+				html += '<td>' + classroom.metadata[key].values[classroom.codes[0]] + '</td>';
+			}
+
+			html += '<td>'+classroom.codes[0]+'</td><td>'+classroom.codes[0]+'</td><td>'+classroom.codes[0]+'</td><td>'+classroom.codes[0]+'</td></tr>';
+
+			for(var i = 1; i < classroom.codes.length; i++){
+				if((i%30)==0){
+					html += '</table><br><br><table width="100%" style=""><tr><th colspan="6" style="text-align:left">Clase '+classroom.key+':</th></tr><tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
+				}
+				html += '<tr><td>'+ (i+1) + '</td><td></td>';
+				for (var key in classroom.metadata) {
+					html += '<td>' + classroom.metadata[key].values[classroom.codes[i]] + '</td>';
+				}
+				html += '<td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td><td>'+classroom.codes[i]+'</td></tr>';
 			}
 
 			html += '</table></body></html>';
@@ -432,13 +451,88 @@ module.exports = function(auth,options){
 		})
 	});
 
+	router.post('/:classid/metadata', auth(1), function(req, res) {
+
+		var classroom = new claseLib.Classroom(req.db, {_id: req.params.classid});
+
+		try {
+			var metadata = JSON.parse(req.body.definition);
+		}catch(error){
+			res.redirect('../../classes/view/' + req.params.classid);
+		}
+
+		classroom.load(function(err,result){
+			classroom.addMetaData(metadata, function(err,result){
+				if(err){
+					console.info(err);
+					console.info(classroom);
+				}
+
+				res.redirect('../../classes/view/' + req.params.classid);
+			})
+		})
+	});
+
+	router.get('/metadata/:metadataid/:code', function(req, res) {
+
+		var classrooms = [];
+		async.waterfall([
+			claseLib.listClassrooms(req.db, {codes: req.params.code}, classrooms)
+		], function (err, result) {
+			var classroom = new claseLib.Classroom(req.db, classrooms[0]);
+
+			classroom.load(function(err,result){
+				if(err){
+					res.status(400);
+					return res.json({ message: "Error obtainig the value", error: err });
+				}
+
+				try{
+					res.json({ value: classroom.getMetaData(req.params.metadataid, req.params.code) });
+				}catch(error){
+					res.status(400);
+					res.json({ message: "Incorrect metadataId", error: error });
+				}
+			})
+		});
+	});
+
+	router.post('/metadata/:metadataid/:code', auth(1), function(req, res) {
+
+		var classrooms = [];
+		async.waterfall([
+			claseLib.listClassrooms(req.db, {codes: req.params.code}, classrooms)
+		], function (err, result) {
+			var classroom = new claseLib.Classroom(req.db, classrooms[0]);
+
+			console.info(classroom);
+
+			classroom.load(function(err,result){
+				if(err){
+					res.status(400);
+					return res.json({ message: "Error loading class", error: err });
+				}
+
+				classroom.setMetaData(req.params.metadataid, req.params.code, req.body.value, function(err,result){
+					if(err){
+						res.status(400);
+						return res.json({ message: "Error adding value", error: err });
+					}
+
+					res.json({ success: true });
+				})
+			})
+		});
+	});
+
 	function generateCodes(number, length, chars, codes = []){
 		var ret = [];
 		for (var i=0; i < number; i++) {
-			var code = randomString(4, 'A');
-			while (repeated(code, codes) > -1) {
-				var code = randomString(4, 'A');
-			}
+			var code;
+			do{
+				code = randomString(4, 'A');
+			}while (repeated(code, codes) > -1);
+
 			codes.push(code);
 			ret.push(code);
 		};

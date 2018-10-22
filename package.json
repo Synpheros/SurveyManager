@@ -10,24 +10,24 @@
     "docker-start": "npm run fast-setup && npm run routes-signup && npm start"
   },
   "dependencies": {
-    "async": "*",
+    "async": "2.6.0",
     "body-parser": "~1.15.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
     "express": "~4.14.0",
     "express-fileupload": "0.0.5",
-    "express-session": "*",
-    "html-pdf" : "*",
+    "express-session": "1.15.6",
+    "html-pdf": "2.2.0",
     "jade": "~1.11.0",
-    "mongodb": "*",
-    "monk": "*",
+    "mongodb": "3.0.5",
+    "monk": "6.0.5",
     "morgan": "~1.7.0",
-    "officegen": "*",
-    "request": "*",
+    "officegen": "0.4.5",
+    "request": "2.85.0",
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
-    "handlebars": "*",
+    "handlebars": "4.0.11",
     "promptly": "2.1.x"
   }
 }

@@ -108,6 +108,7 @@ exports.defaultValues = {
     limesurveyHost: 'localhost',
     limesurveyPort: '80',
     limesurveyUrl: 'http://localhost:80/',
+    externalLimesurveyUrl: 'https://polls.e-ucm.es/',
     backendName: process.env.BACKEND_NAME
 };
 
@@ -133,6 +134,7 @@ exports.testValues = {
     limesurveyHost: 'localhost',
     limesurveyPort: '80',
     limesurveyUrl: 'http://localhost:80/',
+    externalLimesurveyUrl: 'https://polls.e-ucm.es/',
     backendName: process.env.BACKEND_NAME
 };
 
@@ -162,3 +164,9 @@ exports.testValues.limesurveyUrl = exports.defaultValues.limesurveyUrl;
 
 exports.defaultValues.backendUrl = exports.defaultValues.a2ApiPath + 'proxy/' + exports.defaultValues.backendName;
 exports.testValues.backendUrl = exports.defaultValues.backendUrl;
+
+if(process.env.LIMESURVEY_URL){
+    exports.defaultValues.externalLimesurveyUrl = process.env.LIMESURVEY_URL;
+    exports.testValues.externalLimesurveyUrl = process.env.LIMESURVEY_URL;
+}
+
