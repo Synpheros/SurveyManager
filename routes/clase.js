@@ -14,29 +14,29 @@ module.exports = function(auth,options){
 	var claseLib = require('../lib/clase');
 	var surveyLib = require('../lib/survey');
 
-	//Initialize Limesurvey Controller
+	// Initialize Limesurvey Controller
 	var lsController = require('../lib/limesurvey/controller');
 
 	lsController.setOptions(options['limesurvey']);
 	lsController.setUser(user,pass);
 
-	//Initialize A2 Controller
+	// Initialize A2 Controller
 	var a2Controller = require('../lib/a2/controller');
 
 	a2Controller.setUser(options['a2']['username'],options['a2']['password']);
 	a2Controller.setOptions(options['a2']["config"]);
 
-	//Initialize Backend Controller
+	// Initialize Backend Controller
 	var backController = require('../lib/backend/controller');
 	backController.setOptions(options['backend']);
 
-	//set the controllers to the libraries
+	// Set the controllers to the libraries
 	surveyLib.setController(lsController);
 	claseLib.setController(backController);
 	claseLib.setA2(a2Controller);
 
 
-	/* GET mis clases view page. */
+	/* GET classes view page. */
 	router.get('/', auth(1), function(req, res, next) {
 		var clases = [];
 		var db = req.db;
@@ -348,7 +348,7 @@ module.exports = function(auth,options){
 		var classrooms = [];
 
 		if(req.files) {
-			//IMPORT MODE
+			// import mode
 			if(req.files.csv.name != ''){
 				var csv = new Buffer(req.files.csv.data, '7bit').toString();
 
@@ -525,6 +525,13 @@ module.exports = function(auth,options){
 		});
 	});
 
+	/**
+	 * Generate codes 
+	 * @param number 
+	 * @param length
+	 * @param chars
+	 * @param codes 
+	 */
 	function generateCodes(number, length, chars, codes = []){
 		var ret = [];
 		for (var i=0; i < number; i++) {
@@ -539,6 +546,11 @@ module.exports = function(auth,options){
 		return ret;
 	}
 
+	/**
+	 * Generates random string of given length
+	 * @param length
+	 * @param chars
+	 */
 	function randomString(length, chars) {
 		var mask = '';
 		if (chars.indexOf('a') > -1) mask += 'abcdefghijklmnopqrstuvwxyz';
@@ -550,18 +562,14 @@ module.exports = function(auth,options){
 		return result;
 	}
 
-	// funcion auxiliar para chequear si un numero ya ha sido usado
-	function repeated(codigo, usados) {
-		/*var repe = false;
-		for (var i = 0; i < usados.length; i++) {
-			if (codigo == usados[i]) {
-				repe = true;
-			}
-		}*/
-		return usados.indexOf(codigo);
+	/**
+	 * Checks if a code has already been used
+	 * @param code
+	 * @param used
+	 */
+	function repeated(code, used) {
+		return used.indexOf(code);
 	}
-
-
 
 	return router;
 }
