@@ -60,7 +60,7 @@ module.exports = function(auth, options){
 
 		// Check repeated passwords match
 		if (userPass != req.body.pass2) {
-			res.send("Error. Las contraseñas no coinciden.");
+			res.send("Error. Passwords do not match.");
 			return;
 		}
 
@@ -70,8 +70,8 @@ module.exports = function(auth, options){
 		collection.find({ $or: [ {"username": userName}, {"email": userEmail} ]}, function(err,docs) {
 			if (err) res.send(err);
 			if (docs.length > 0) {
-				// Username or email already exist
-				res.send("Error. Ya existe el usuario.");
+				// Username or email already exists
+				res.send("Error. User already exists.");
 			}
 			else {
 				// Submit to the DB
