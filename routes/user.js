@@ -1,5 +1,3 @@
-/* GET home page. */
-
 module.exports = function(auth, options){
 
 	var request = require('request');
@@ -13,7 +11,7 @@ module.exports = function(auth, options){
 		res.redirect('users/teacherview');
 	});
 
-	/* GET login page. */
+	/* GET login page */
 	router.get('/login', function(req, res, next) {
 		res.render('login_material', { title: 'Acceso profesor' });
 	});
@@ -23,12 +21,12 @@ module.exports = function(auth, options){
 		res.redirect('login');
 	})
 
-	/* GET register page. */
+	/* GET register page */
 	router.get('/register', function(req, res, next) {
 		res.render('register', { title: 'Registro profesor'});
 	});
 
-	/* GET userlist page. */
+	/* GET userlist page */
 	router.get('/userlist', auth, function(req, res) {
 		var db = req.db;
 		var collection = db.get('usercollection');
@@ -37,7 +35,7 @@ module.exports = function(auth, options){
 		});
 	});
 
-	/* GET teacher view page. */
+	/* GET teacher view page */
 	router.get('/teacherview', auth, function(req, res, next) {
 		var db = req.db;
 		var classcollection = db.get('classcollection');
@@ -62,7 +60,7 @@ module.exports = function(auth, options){
 
 		// Check repeated passwords match
 		if (userPass != req.body.pass2) {
-			res.send("Error. Las contraseñas no coinciden.");
+			res.send("Error. Passwords do not match.");
 			return;
 		}
 
@@ -72,8 +70,8 @@ module.exports = function(auth, options){
 		collection.find({ $or: [ {"username": userName}, {"email": userEmail} ]}, function(err,docs) {
 			if (err) res.send(err);
 			if (docs.length > 0) {
-				// Username or email already exist
-				res.send("Error. Ya existe el usuario.");
+				// Username or email already exists
+				res.send("Error. User already exists.");
 			}
 			else {
 				// Submit to the DB

@@ -13,24 +13,24 @@ module.exports = function(auth, options){
 	var claseLib = require('../lib/clase');
 	var surveyLib = require('../lib/survey');
 
-	//Initialize Limesurvey Controller
+	// Initialize Limesurvey Controller
 	var lsController = require('../lib/limesurvey/controller');
 
 	lsController.setOptions(options['limesurvey']);
 	lsController.setUser(user,pass);
 
-	//Initialize A2 Controller
+	// Initialize A2 Controller
 	var a2Controller = require('../lib/a2/controller');
 
 	a2Controller.setOptions(options['a2']["config"]);
 	a2Controller.setUser(options['a2']["username"],options['a2']["password"]);
 
-	//Initialize Backend Controller
+	// Initialize Backend Controller
 	var backController = require('../lib/backend/controller');
 
 	backController.setOptions(options['backend']);
 
-	//set the controllers to the libraries
+	// Set the controllers to the libraries
 	surveyLib.setController(lsController);
 	claseLib.setController(backController);
 	claseLib.setA2(a2Controller);
@@ -94,9 +94,7 @@ module.exports = function(auth, options){
 		});
 	});
 
-	//###################################################
-	//################## ALTAENCUESTA ###################
-	//###################################################
+	// Add new survey
 	router.post('/', auth(1), function(req, res, next) {
 		var pre, post;
 
@@ -146,6 +144,7 @@ module.exports = function(auth, options){
 
 	});
 
+	// Add class
 	router.post('/addclass', auth(1), function(req, res) {
 		var classroom = new claseLib.Classroom(req.db, {_id: req.body.classroom});
 		classroom.load(function(err,result){
@@ -160,6 +159,7 @@ module.exports = function(auth, options){
 		})
 	});
 
+	// Delete class
 	router.post('/delclass', auth(1), function(req, res) {
 		var classroom = new claseLib.Classroom(req.db, {_id: req.body.classroom});
 		classroom.load(function(err,result){
@@ -283,6 +283,12 @@ module.exports = function(auth, options){
 		res.end();
 	});
 
+	/**
+	 * Get class where given code and survey belong to
+	 * @param db
+	 * @param survey
+	 * @param code
+	 */
 	function getClassForCode(db, survey,code,callback){
 		var surveys = [], classrooms = [];
 
