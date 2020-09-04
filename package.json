@@ -27,7 +27,7 @@
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
-    "handlebars": "4.0.11",
+    "handlebars": "4.7.6",
     "promptly": "2.1.x"
   }
 }
