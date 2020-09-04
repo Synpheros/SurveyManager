@@ -19,7 +19,7 @@
     "express-session": "1.15.6",
     "html-pdf": "2.2.0",
     "jade": "~1.11.0",
-    "mongodb": "3.0.5",
+    "mongodb": "3.6.1",
     "monk": "6.0.5",
     "morgan": "~1.7.0",
     "officegen": "0.4.5",
